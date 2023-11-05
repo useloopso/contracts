@@ -5,6 +5,10 @@ import "@openzeppelin/contracts/access/AccessControl.sol";
 import "./interfaces/ILoopso.sol";
 
 contract Loopso is AccessControl, ILoopso {
+
+    mapping(bytes32 => TokenAttestation) attestedTokens; // from token ID to TokenAttestation on dest chain
+    mapping(bytes32  => TokenTransfer) tokenTransfers; // from transfer ID to transfer on source chain
+
     constructor() {
         _setupRole(DEFAULT_ADMIN_ROLE, msg.sender);
     }
@@ -27,11 +31,11 @@ contract Loopso is AccessControl, ILoopso {
         // TODO
     }
 
-    function releaseTokens(bytes32 _transferID) external onlyAdmin {
+    function releaseTokens(uint256 _amount, address _to, bytes32 _tokenID) external onlyAdmin {
         // TODO
     }
 
-    function bridgeTokensBack(bytes32 _tokenID, uint256 _amount) external {
+    function bridgeTokensBack(uint256 _amount, address _to, bytes32 _tokenID) external {
         // TODO
     }
 }

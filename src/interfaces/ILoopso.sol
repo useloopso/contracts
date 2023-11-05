@@ -8,23 +8,22 @@ interface ILoopso {
         uint8 decimals;
         string symbol;
         string name;
+        address wrappedTokenAddress;
     }
 
     struct TokenTransfer {
-        bytes32 transferID;
         uint256 timestamp;
-        uint256 nonce;
         uint256 srcChain;
         address srcAddress;
         uint256 dstChain;
         address dstAddress;
-        bytes32 tokenID;
         uint256 amount;
         uint256 fee;
     }
 
     event TokenAttested(bytes32 indexed tokenID);
     event TokenBridged(bytes32 indexed transferID);
+    event TokenReleased(uint256 indexed amount, address indexed to, bytes32 indexed tokenID);
 
     /**
     @dev Called by bridge admin on the destination chain to attest a token
@@ -47,10 +46,10 @@ interface ILoopso {
     @dev Called by the offchain node after it picks up a bridge event from the source chain.
     It mints wrapped tokens equivalent to the tokens locked up on the source chain.
      */
-    function releaseTokens(bytes32 _transferID) external;
+    function releaseTokens(uint256 _amount, address _to, bytes32 _tokenID) external;
 
     /**
     @dev Burns _amount of locked tokens on the destination chain, and makes them available for withdraw on the source chain.
      */
-    function bridgeTokensBack(bytes32 _tokenID, uint256 _amount) external;
+    function bridgeTokensBack(uint256 _amount, address _to, bytes32 _tokenID) external;
 }
