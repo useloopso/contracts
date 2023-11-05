@@ -5,16 +5,23 @@ import "@openzeppelin/contracts/access/AccessControl.sol";
 import "./interfaces/ILoopso.sol";
 
 contract Loopso is AccessControl, ILoopso {
+    bytes32 public constant RELAYER_ROLE = keccak256("RELAYER_ROLE");
 
     mapping(bytes32 => TokenAttestation) attestedTokens; // from token ID to TokenAttestation on dest chain
     mapping(bytes32  => TokenTransfer) tokenTransfers; // from transfer ID to transfer on source chain
 
     constructor() {
         _setupRole(DEFAULT_ADMIN_ROLE, msg.sender);
+        _setRoleAdmin(RELAYER_ROLE, DEFAULT_ADMIN_ROLE);
     }
 
     modifier onlyAdmin() {
         _checkRole(DEFAULT_ADMIN_ROLE);
+        _;
+    }
+
+    modifier onlyRelayer() {
+        _checkRole(RELAYER_ROLE);
         _;
     }
 
@@ -31,11 +38,16 @@ contract Loopso is AccessControl, ILoopso {
         // TODO
     }
 
-    function releaseTokens(uint256 _amount, address _to, bytes32 _tokenID) external onlyAdmin {
-        // TODO
-    }
-
     function bridgeTokensBack(uint256 _amount, address _to, bytes32 _tokenID) external {
         // TODO
     }
+
+    function releaseWrappedTokens(uint256 _amount, address _to, bytes32 _tokenID) external onlyRelayer {
+        // TODO
+    }
+
+    function releaseTokens(uint256 _amount, address _to, address _token) external onlyRelayer {
+        // TODO
+    }
+
 }
