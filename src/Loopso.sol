@@ -1,17 +1,37 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.17;
 
+import "@openzeppelin/contracts/access/AccessControl.sol";
+import "./interfaces/ILoopso.sol";
 
-/* 
-    - access control
-        Emit event to support a token on one chain
-        Offline node picks up, call support token on dest chain
+contract Loopso is AccessControl, ILoopso {
+    constructor() {
+        _setupRole(DEFAULT_ADMIN_ROLE, msg.sender);
+    }
 
-        Send token: locks up tokens on src chain, emits event
-        ReleaseToken: mints wrapped tokens based on call from dest chain
-        Send back token: burn wrapped token, unlock token on src chain
- */
+    modifier onlyAdmin() {
+        _checkRole(DEFAULT_ADMIN_ROLE);
+        _;
+    }
 
-contract Loopso {
+    function attestToken(TokenAttestation memory attestation) external onlyAdmin {
+        // TODO
+    }
 
+    function bridgeTokens(
+        address _token,
+        uint256 _amount,
+        uint256 _dstChain,
+        address _dstAddress
+    ) external {
+        // TODO
+    }
+
+    function releaseTokens(bytes32 _transferID) external onlyAdmin {
+        // TODO
+    }
+
+    function bridgeTokensBack(bytes32 _tokenID, uint256 _amount) external {
+        // TODO
+    }
 }
