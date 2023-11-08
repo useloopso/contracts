@@ -27,6 +27,7 @@ contract Loopso is AccessControl, ILoopso {
 
     function attestToken(TokenAttestation memory attestation) external onlyAdmin {
         // TODO
+        // bytes attestationID = keccak256(abi.encodePacked(attestation.tokenAddress, attestation.tokenChain));
     }
 
     function bridgeTokens(
