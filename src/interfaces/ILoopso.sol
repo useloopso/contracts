@@ -2,9 +2,15 @@
 pragma solidity ^0.8.17;
 
 interface ILoopso {
+    enum TokenType {
+        LSP7,
+        LSP8
+    }
+
     struct TokenAttestation {
         address tokenAddress;
         uint256 tokenChain;
+        TokenType tokenType;
         uint8 decimals;
         string symbol;
         string name;
