@@ -11,7 +11,7 @@ contract Loopso is AccessControl, ILoopso {
     mapping(bytes32  => TokenTransfer) tokenTransfers; // from transfer ID to transfer on source chain
 
     constructor() {
-        _setupRole(DEFAULT_ADMIN_ROLE, msg.sender);
+        _grantRole(DEFAULT_ADMIN_ROLE, msg.sender);
         _setRoleAdmin(RELAYER_ROLE, DEFAULT_ADMIN_ROLE);
     }
 

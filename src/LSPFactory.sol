@@ -3,13 +3,14 @@ pragma solidity ^0.8.17;
 
 import "@openzeppelin/contracts/proxy/Clones.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
+import "@lukso/LSP7/LSP7DigitalAssetInitAbstract.sol";
 
 contract LSPFactory is Ownable {
     address public bridge;
     bytes32 public constant BRIDGE_ROLE = keccak256("BRIDE_ROLE");
     address public masterLSP7;
 
-    constructor(address _masterLSP7, address _bridge) {
+    constructor(address _masterLSP7, address _bridge) Ownable(msg.sender) {
         masterLSP7 = _masterLSP7;
         bridge = _bridge;
     }
