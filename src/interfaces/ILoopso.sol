@@ -3,8 +3,8 @@ pragma solidity ^0.8.17;
 
 interface ILoopso {
     enum TokenType {
-        LSP7,
-        LSP8
+        Fungible,
+        NonFungible
     }
 
     struct TokenAttestation {
@@ -17,15 +17,25 @@ interface ILoopso {
         address wrappedTokenAddress;
     }
 
-    struct TokenTransfer {
+    struct TokenTransferBase {
         uint256 timestamp;
         uint256 srcChain;
         address srcAddress;
         uint256 dstChain;
         address dstAddress;
-        uint256 amount;
-        uint256 fee;
+        address tokenAddress;
     }
+
+    struct TokenTransfer {
+        TokenTransferBase tokenTransfer;
+        uint256 amount;
+    }
+
+    struct TokenTransferNonFungible {
+        TokenTransferBase tokenTransfer;
+        uint256 tokenID;
+    }
+
     /** @dev Emitted by attestToken. Means a new token is supported by the bridge. */
     event TokenAttested(bytes32 indexed tokenID);
 
