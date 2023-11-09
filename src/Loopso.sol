@@ -5,12 +5,10 @@ import "@openzeppelin/contracts/access/AccessControl.sol";
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "@openzeppelin/contracts/token/ERC721/IERC721.sol";
 import "./interfaces/ILoopso.sol";
-import "./interfaces/ILSPFactory.sol";
-import "./interfaces/IERCFactory.sol";
+import "./interfaces/ITokenFactory.sol";
 import "./interfaces/ILSP7Bridged.sol";
 
 contract Loopso is AccessControl, ILoopso {
-    uint256 constant LUKSO_CHAIN_ID = 4201;
     bytes32 public constant RELAYER_ROLE = keccak256("RELAYER_ROLE");
 
     // TODO: uint256 public BRIDGE_FEE
@@ -18,8 +16,7 @@ contract Loopso is AccessControl, ILoopso {
     mapping(bytes32 => TokenAttestation) public attestedTokens; // from token ID to TokenAttestation on dest chain
     mapping(bytes32  => TokenTransfer) public tokenTransfers; // from transfer ID to transfer on source chain
 
-    ILSPFactory public lspFactory;
-    IERCFactory public ercFactory;
+    ITokenFactory public tokenFactory;
 
     constructor() {
         _grantRole(DEFAULT_ADMIN_ROLE, msg.sender);
@@ -39,18 +36,10 @@ contract Loopso is AccessControl, ILoopso {
     function attestToken(TokenAttestation memory attestation) external onlyAdmin {
         address _newTokenAddress;
 
-        if (block.chainid == LUKSO_CHAIN_ID) {
-            if (attestation.tokenType == TokenType.Fungible) {
-             _newTokenAddress = lspFactory.createNewLSP7(attestation.name, attestation.symbol);
-            } else {
-                _newTokenAddress = lspFactory.createNewLSP8(attestation.name, attestation.symbol);
-            }
+        if (attestation.tokenType == TokenType.Fungible) {
+            _newTokenAddress = tokenFactory.createNewLSP7(attestation.name, attestation.symbol);
         } else {
-            if (attestation.tokenType == TokenType.Fungible) {
-             _newTokenAddress = ercFactory.createNewERC20(attestation.name, attestation.symbol);
-            } else {
-                _newTokenAddress = ercFactory.createNewERC721(attestation.name, attestation.symbol);
-            }
+            _newTokenAddress = tokenFactory.createNewLSP8(attestation.name, attestation.symbol);
         }
 
         attestation.wrappedTokenAddress = _newTokenAddress;
@@ -129,13 +118,8 @@ contract Loopso is AccessControl, ILoopso {
         // TODO
     }
 
-    function setLSPFactory(ILSPFactory _lspFactory) external onlyAdmin {
-        require(address(_lspFactory) != address(0), "Can't set LSP Factory to the zero address");
-        lspFactory = _lspFactory;
-    }
-
-    function setERCFactory(IERCFactory _ercFactory) external onlyAdmin {
-        require(address(_ercFactory) != address(0), "Can't set ERC Factory to the zero address");
-        ercFactory = _ercFactory;
+    function setTokenFactory(ITokenFactory _tokenFactory) external onlyAdmin {
+        require(address(_tokenFactory) != address(0), "Can't set LSP Factory to the zero address");
+        tokenFactory = _tokenFactory;
     }
 }

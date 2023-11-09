@@ -3,11 +3,11 @@ pragma solidity ^0.8.17;
 
 import "@openzeppelin/contracts/proxy/Clones.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
-import "./interfaces/ILSPFactory.sol";
+import "./interfaces/ITokenFactory.sol";
 import "./LSP7Bridged.sol";
 import "./LSP8Bridged.sol";
 
-contract LSPFactory is Ownable, ILSPFactory {
+contract LSPFactory is Ownable, ITokenFactory {
     address public bridge;
     bytes32 public constant BRIDGE_ROLE = keccak256("BRIDE_ROLE");
     address public masterLSP7;

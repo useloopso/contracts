@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.17;
 
-interface ILSPFactory {
+interface ITokenFactory {
     event NewLSP7(address indexed tokenAddress);
     event NewLSP8(address indexed tokenAddress);
 
