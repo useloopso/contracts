@@ -3,12 +3,15 @@ pragma solidity ^0.8.17;
 
 import "@openzeppelin/contracts/access/AccessControl.sol";
 import "./interfaces/ILoopso.sol";
+import "./interfaces/ILSPFactory.sol";
 
 contract Loopso is AccessControl, ILoopso {
     bytes32 public constant RELAYER_ROLE = keccak256("RELAYER_ROLE");
 
     mapping(bytes32 => TokenAttestation) attestedTokens; // from token ID to TokenAttestation on dest chain
     mapping(bytes32  => TokenTransfer) tokenTransfers; // from transfer ID to transfer on source chain
+
+    ILSPFactory public lspFactory;
 
     constructor() {
         _grantRole(DEFAULT_ADMIN_ROLE, msg.sender);
@@ -51,4 +54,8 @@ contract Loopso is AccessControl, ILoopso {
         // TODO
     }
 
+    function setLSPFactory(ILSPFactory _lspFactory) external onlyAdmin {
+        require(address(_lspFactory) != address(0), "Can't set LSP Factory to the zero address");
+        lspFactory = _lspFactory;
+    }
 }
