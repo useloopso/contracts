@@ -1,0 +1,765 @@
+{
+	"compiler": {
+		"version": "0.8.22+commit.4fc1097e"
+	},
+	"language": "Solidity",
+	"output": {
+		"abi": [
+			{
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "_masterLSP7",
+						"type": "address"
+					},
+					{
+						"internalType": "address",
+						"name": "_masterLSP8",
+						"type": "address"
+					},
+					{
+						"internalType": "address",
+						"name": "_bridge",
+						"type": "address"
+					}
+				],
+				"stateMutability": "nonpayable",
+				"type": "constructor"
+			},
+			{
+				"inputs": [],
+				"name": "ERC1167FailedCreateClone",
+				"type": "error"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "owner",
+						"type": "address"
+					}
+				],
+				"name": "OwnableInvalidOwner",
+				"type": "error"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "account",
+						"type": "address"
+					}
+				],
+				"name": "OwnableUnauthorizedAccount",
+				"type": "error"
+			},
+			{
+				"anonymous": false,
+				"inputs": [
+					{
+						"indexed": true,
+						"internalType": "address",
+						"name": "masterLSP7",
+						"type": "address"
+					}
+				],
+				"name": "MasterLSP7Set",
+				"type": "event"
+			},
+			{
+				"anonymous": false,
+				"inputs": [
+					{
+						"indexed": true,
+						"internalType": "address",
+						"name": "masterLSP8",
+						"type": "address"
+					}
+				],
+				"name": "MasterLSP8Set",
+				"type": "event"
+			},
+			{
+				"anonymous": false,
+				"inputs": [
+					{
+						"indexed": true,
+						"internalType": "address",
+						"name": "tokenAddress",
+						"type": "address"
+					}
+				],
+				"name": "NewLSP7",
+				"type": "event"
+			},
+			{
+				"anonymous": false,
+				"inputs": [
+					{
+						"indexed": true,
+						"internalType": "address",
+						"name": "tokenAddress",
+						"type": "address"
+					}
+				],
+				"name": "NewLSP8",
+				"type": "event"
+			},
+			{
+				"anonymous": false,
+				"inputs": [
+					{
+						"indexed": true,
+						"internalType": "address",
+						"name": "previousOwner",
+						"type": "address"
+					},
+					{
+						"indexed": true,
+						"internalType": "address",
+						"name": "newOwner",
+						"type": "address"
+					}
+				],
+				"name": "OwnershipTransferred",
+				"type": "event"
+			},
+			{
+				"inputs": [],
+				"name": "BRIDGE_ROLE",
+				"outputs": [
+					{
+						"internalType": "bytes32",
+						"name": "",
+						"type": "bytes32"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "bridge",
+				"outputs": [
+					{
+						"internalType": "address",
+						"name": "",
+						"type": "address"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "string",
+						"name": "_name",
+						"type": "string"
+					},
+					{
+						"internalType": "string",
+						"name": "_symbol",
+						"type": "string"
+					}
+				],
+				"name": "createNewLSP7",
+				"outputs": [
+					{
+						"internalType": "address",
+						"name": "",
+						"type": "address"
+					}
+				],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "string",
+						"name": "_name",
+						"type": "string"
+					},
+					{
+						"internalType": "string",
+						"name": "_symbol",
+						"type": "string"
+					}
+				],
+				"name": "createNewLSP8",
+				"outputs": [
+					{
+						"internalType": "address",
+						"name": "",
+						"type": "address"
+					}
+				],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "masterLSP7",
+				"outputs": [
+					{
+						"internalType": "address",
+						"name": "",
+						"type": "address"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "masterLSP8",
+				"outputs": [
+					{
+						"internalType": "address",
+						"name": "",
+						"type": "address"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "owner",
+				"outputs": [
+					{
+						"internalType": "address",
+						"name": "",
+						"type": "address"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "renounceOwnership",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "_masterLSP7",
+						"type": "address"
+					}
+				],
+				"name": "setMasterLSP7",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "_masterLSP8",
+						"type": "address"
+					}
+				],
+				"name": "setMasterLSP8",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "newOwner",
+						"type": "address"
+					}
+				],
+				"name": "transferOwnership",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			}
+		],
+		"devdoc": {
+			"errors": {
+				"ERC1167FailedCreateClone()": [
+					{
+						"details": "A clone instance deployment failed."
+					}
+				],
+				"OwnableInvalidOwner(address)": [
+					{
+						"details": "The owner is not a valid owner account. (eg. `address(0)`)"
+					}
+				],
+				"OwnableUnauthorizedAccount(address)": [
+					{
+						"details": "The caller account is not authorized to perform an operation."
+					}
+				]
+			},
+			"kind": "dev",
+			"methods": {
+				"owner()": {
+					"details": "Returns the address of the current owner."
+				},
+				"renounceOwnership()": {
+					"details": "Leaves the contract without owner. It will not be possible to call `onlyOwner` functions. Can only be called by the current owner. NOTE: Renouncing ownership will leave the contract without an owner, thereby disabling any functionality that is only available to the owner."
+				},
+				"transferOwnership(address)": {
+					"details": "Transfers ownership of the contract to a new account (`newOwner`). Can only be called by the current owner."
+				}
+			},
+			"version": 1
+		},
+		"userdoc": {
+			"kind": "user",
+			"methods": {},
+			"version": 1
+		}
+	},
+	"settings": {
+		"compilationTarget": {
+			"src/TokenFactory.sol": "LSPFactory"
+		},
+		"evmVersion": "shanghai",
+		"libraries": {},
+		"metadata": {
+			"bytecodeHash": "ipfs"
+		},
+		"optimizer": {
+			"enabled": true,
+			"runs": 200
+		},
+		"remappings": [
+			":@lukso/=lib/lukso-foundry/src/",
+			":@openzeppelin-contracts-upgradeable/=lib/lukso-foundry/lib/openzeppelin-contracts-upgradeable/contracts/",
+			":@openzeppelin/=lib/openzeppelin-contracts/",
+			":ds-test/=lib/forge-std/lib/ds-test/src/",
+			":forge-std/=lib/forge-std/src/"
+		]
+	},
+	"sources": {
+		"lib/lukso-foundry/lib/openzeppelin-contracts-upgradeable/contracts/proxy/utils/Initializable.sol": {
+			"keccak256": "0x631188737069917d2f909d29ce62c4d48611d326686ba6683e26b72a23bfac0b",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://7a61054ae84cd6c4d04c0c4450ba1d6de41e27e0a2c4f1bcdf58f796b401c609",
+				"dweb:/ipfs/QmUvtdp7X1mRVyC3CsHrtPbgoqWaXHp3S1ZR24tpAQYJWM"
+			]
+		},
+		"lib/lukso-foundry/src/ERC725/ERC725YCore.sol": {
+			"keccak256": "0x05b47d7b46211af80ea52164425e6d31f4cdc869700a2081d875ef3739576f63",
+			"license": "Apache-2.0",
+			"urls": [
+				"bzz-raw://f55d5ddc7a261f11a4cbe60066be26fad13c9cbab96f1816c57debdd5ceaa35c",
+				"dweb:/ipfs/QmYhT9mewkCnv3iNBKVGwVDVqYjnYBfVrDgwSj4v1TJTAn"
+			]
+		},
+		"lib/lukso-foundry/src/ERC725/ERC725YInitAbstract.sol": {
+			"keccak256": "0xf1b72567ce9042b6ec648fea8b0b7cb9803e107fa41cb702112c42caed4099a9",
+			"license": "Apache-2.0",
+			"urls": [
+				"bzz-raw://9255a1d878fa5fe870a03242c018c3a93b57817420c8847d0449dcbc070b8b76",
+				"dweb:/ipfs/QmdbJDmHvfFiEZkiQRR8ae4GhmwSRvxYeG7WnUhWTmTMBZ"
+			]
+		},
+		"lib/lukso-foundry/src/ERC725/constants.sol": {
+			"keccak256": "0x9afea6f5a327e8ece07613c26757a37443510b01219ed35602abd52b5afb438f",
+			"license": "Apache-2.0",
+			"urls": [
+				"bzz-raw://894ee0d003e41f244aeb497ff36a7c3b8a9dd9692350e49d5db0f0640da1b997",
+				"dweb:/ipfs/QmNhoy4FuiMuCCNmHFWGR33arHY8BQyRkKiM55xiBXjxZb"
+			]
+		},
+		"lib/lukso-foundry/src/ERC725/custom/OwnableUnset.sol": {
+			"keccak256": "0xb7cf830b54f8571b3c2d267d64c4bf514f1fc2744a5060528b5ee9184b07306b",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://ac918a1055a08880eae6e5fe9eeab8c692d58ef72534ba22c308e42a4a00ebcf",
+				"dweb:/ipfs/QmcaEPPoxiUXbwymurK6ZJwUPGgEyz7J4HEmVrcGJPvmnQ"
+			]
+		},
+		"lib/lukso-foundry/src/ERC725/errors.sol": {
+			"keccak256": "0xbb58894e6843c8fa54e1d2885c4967663360f47107985d83ad502f7dfc63a568",
+			"license": "Apache-2.0",
+			"urls": [
+				"bzz-raw://d00e92cc91c2fba1b3cd077b556a4171fcc6c77ab2cf15e084d1638afb1ef1b6",
+				"dweb:/ipfs/QmUEydU3D2LU5J14QoGGzU6P8n7PwR2s87VEA2qWWnkYLQ"
+			]
+		},
+		"lib/lukso-foundry/src/ERC725/interfaces/IERC725Y.sol": {
+			"keccak256": "0xcaceed955485ddb773cf89da15a6af79a9606e20db8a5ad0a9012a61186cc0c3",
+			"license": "CC0-1.0",
+			"urls": [
+				"bzz-raw://f82149c49125ebad21b340229cfb33119369fd8d600f06a3532c0748fe6e85e8",
+				"dweb:/ipfs/Qme7y5HbY1mDge1cm2RhRDHb75d2RtCE7TJeJzdaAuiTZ3"
+			]
+		},
+		"lib/lukso-foundry/src/LSP1/ILSP1UniversalReceiver.sol": {
+			"keccak256": "0xfb3fcb4f2a7ddab4f29e2163ebf76f526fcee6c9cd8a87092688e3ec234c4af9",
+			"license": "Apache-2.0",
+			"urls": [
+				"bzz-raw://53309dcb1d8e57183ab444279f43fb60eab49f92cd431412401bfc72200fba0b",
+				"dweb:/ipfs/QmfCaV74Nh4S3na1oPtTDuWjcSsJpFoPhvfn1swHhQ3DRr"
+			]
+		},
+		"lib/lukso-foundry/src/LSP1/LSP1Constants.sol": {
+			"keccak256": "0xa2924f64e41a515a9fc4245b0af52d693fdc9312d6814288b5b711b55bc6f005",
+			"license": "Apache-2.0",
+			"urls": [
+				"bzz-raw://0062bdb354e810af172d37fbc7a398f7885788bc91ec1bbd98d52546433fd0d1",
+				"dweb:/ipfs/QmYyMDaSjpohGHLV9CxUGc52sAMFkEBmDdXgWr5hnDAA2k"
+			]
+		},
+		"lib/lukso-foundry/src/LSP1/LSP1Utils.sol": {
+			"keccak256": "0xd5f12b6d7117bc53d9320f48381c64267d9f7871e186606a9e44c4bd363c3517",
+			"license": "Apache-2.0",
+			"urls": [
+				"bzz-raw://27dcab2a4345491bd9d50303c37d0b652a252caccc90c145e87390c3fde27caf",
+				"dweb:/ipfs/QmQxfvKGFjMUPBYVgqJA1kHjWeJo6kWGtzWzQJNeoaLP2V"
+			]
+		},
+		"lib/lukso-foundry/src/LSP17/LSP17Constants.sol": {
+			"keccak256": "0xa34118ff863a8faff830b016329fd80265142f7191530bb21344e50a7846f2c2",
+			"license": "Apache-2.0",
+			"urls": [
+				"bzz-raw://cd0116f0ffc53d769c51d8581a572ea2ec5dc92f31823b542c6d246e68dbc360",
+				"dweb:/ipfs/QmSoAvbh8Vi56giuBjQtaEFTC6c5kjbzmmun3VfoGapKtR"
+			]
+		},
+		"lib/lukso-foundry/src/LSP17/LSP17Errors.sol": {
+			"keccak256": "0xbd53b87a3240bea2cca424835a8c4b1a1b1c9eb90caa525bf1cd3748528afca6",
+			"license": "Apache-2.0",
+			"urls": [
+				"bzz-raw://078ef7696d736e6f6fcaf3901dbbe6449e0512b775725051e89e932a5e486da3",
+				"dweb:/ipfs/QmeCx452QirbwnoBnGJERFUuEZiQtZbBW7EGxamiMNEGs8"
+			]
+		},
+		"lib/lukso-foundry/src/LSP17/LSP17Extendable.sol": {
+			"keccak256": "0xddeb04c4af76a0e08df92467c4291c0f617545dd00243d7d4e6d647c5024f022",
+			"license": "Apache-2.0",
+			"urls": [
+				"bzz-raw://cc621d391c1f867f197bcaefd9252a4163547e6e6ab209e17f0f3699cc6a0e3a",
+				"dweb:/ipfs/QmbqAondK5AvsxHhNJQ4wyzChmrk6fxbXVnKCApJR4N7tg"
+			]
+		},
+		"lib/lukso-foundry/src/LSP2/LSP2Utils.sol": {
+			"keccak256": "0xbcdbdabdd59ff21317cc2c1f9d6291705a6b349f93e48050046336bb0f7b2864",
+			"license": "Apache-2.0",
+			"urls": [
+				"bzz-raw://534452b881670c8c7cf3677ecd866cc76704585eb49a3f562940f94d889df079",
+				"dweb:/ipfs/QmYjmr2hzTC9nLg3sQajYCre3EVqP4qqRg1gbcVFnb3jAH"
+			]
+		},
+		"lib/lukso-foundry/src/LSP4/LSP4Constants.sol": {
+			"keccak256": "0xcdd82ff6b9cfcafe9560a367c45dc663ae138b8a5b3475035876d4f736bc98b6",
+			"license": "Apache-2.0",
+			"urls": [
+				"bzz-raw://c24b89cd9b9056649523966a42f2cd8eac082a0ebd4d982f83aa1a65fef9ebda",
+				"dweb:/ipfs/QmUvy4BWkTvLsQsCE6ELxJYgVcEXDkhss5MAmBXLuGZwbS"
+			]
+		},
+		"lib/lukso-foundry/src/LSP4/LSP4DigitalAssetMetadataInitAbstract.sol": {
+			"keccak256": "0x78a35068578ea44f2182fb7986e2b1258be1a09b564740efc1a5a2ee4ff35bc5",
+			"license": "Apache-2.0",
+			"urls": [
+				"bzz-raw://945e2d63d7fcfb0fe850b755b814bb75051caae457d2fe8dfd483765b48264f3",
+				"dweb:/ipfs/QmVZN6ne6eB8nbCBqXpQDNAu12taZuGWoCm7P3iHm3MnAz"
+			]
+		},
+		"lib/lukso-foundry/src/LSP4/LSP4Errors.sol": {
+			"keccak256": "0xe1d0efb2c6248b2cf95034f87b80a389eeb05a906cc45d63ede002de48ab12fe",
+			"license": "Apache-2.0",
+			"urls": [
+				"bzz-raw://6d77a9f00916788ad7883b775cbe8d2094245a4e891b5a958841fe6543c43365",
+				"dweb:/ipfs/QmaZLTqEXTuGguDGAUrnhmjTDtHwXTpQXVYQHssmMSLUfa"
+			]
+		},
+		"lib/lukso-foundry/src/LSP7/ILSP7DigitalAsset.sol": {
+			"keccak256": "0xf931e4d30b16e5228df796b275c7364fcfc9e92878e3779d07656bf6405f5cb9",
+			"license": "Apache-2.0",
+			"urls": [
+				"bzz-raw://e2f0a6423c48ae0cb49bcd0deffffc5e15adf33d81355037be393115d60ab1a8",
+				"dweb:/ipfs/QmYeJaRR9VkxkgYaeimw7btB4CC7dtMJnyfqFFras5LH6w"
+			]
+		},
+		"lib/lukso-foundry/src/LSP7/LSP7Constants.sol": {
+			"keccak256": "0x3e4f55b24760e33dab158073857da3cb95092c0e4dd565e330292afa87913a0b",
+			"license": "Apache-2.0",
+			"urls": [
+				"bzz-raw://2bcbd4995543f79192d082a8be5e4c47588348f0ff0e1aee6f824fe65be98bba",
+				"dweb:/ipfs/QmXSnC3Dhn7FkfoG3HKejophPBxHP5VNAkhxjJZeCo2REw"
+			]
+		},
+		"lib/lukso-foundry/src/LSP7/LSP7DigitalAssetCore.sol": {
+			"keccak256": "0x89dc1ae3fd8fab1d2c23c7914dd21e4b712151917edf6594053dcb963e5ad3bb",
+			"license": "Apache-2.0",
+			"urls": [
+				"bzz-raw://2b67f8379ff82d0eda3111787ee99508ee1be08af69b67d57de6b2f2c666721b",
+				"dweb:/ipfs/QmeNV9Lqa9iVttDaD6zppKETEp87fAM557c26Z617TFhsF"
+			]
+		},
+		"lib/lukso-foundry/src/LSP7/LSP7DigitalAssetInitAbstract.sol": {
+			"keccak256": "0x53c039aafbcaf1127a695cae5dd62fa1a25e76cba42191654b3c243c41ea1af8",
+			"license": "Apache-2.0",
+			"urls": [
+				"bzz-raw://643bdd1322be2c3c3bcc1ab94eb26b5523a9d7e706f807dbfc666c04d19310d2",
+				"dweb:/ipfs/QmZzpD7Kg1zsPLyqkjEKDABR3uMjcXg8FaFD8GzpKuWYZg"
+			]
+		},
+		"lib/lukso-foundry/src/LSP7/LSP7Errors.sol": {
+			"keccak256": "0xd835a6aa1d55c56d55423b426fd0d5714abe18f8997b18b9618f698a7833506c",
+			"license": "Apache-2.0",
+			"urls": [
+				"bzz-raw://bc6855724b6d88367a27b331570c8673c126f6b3fdd7a4eae5b66b7172e2abe3",
+				"dweb:/ipfs/QmaJQFAZwMqM6wKfz2MakHtJwjd9ueiZHZn6qzyZxEG6wf"
+			]
+		},
+		"lib/lukso-foundry/src/LSP7/extensions/LSP7CompatibleERC20InitAbstract.sol": {
+			"keccak256": "0x9fe5d88db6ec676e4cfabc90ae516a9881e1f01918ed620c20978d9e7b9852b0",
+			"license": "Apache-2.0",
+			"urls": [
+				"bzz-raw://6ce9ff1aea5c252a325d144a96a7669260773f03725e20f9b470a852197f90a4",
+				"dweb:/ipfs/QmUsyPVPHpTxZKXLYSb4vihzTRa9dQEweKL5tx7bMpR8vK"
+			]
+		},
+		"lib/lukso-foundry/src/LSP7/presets/LSP7CompatibleERC20MintableInit.sol": {
+			"keccak256": "0x86001a80d0b824b23c793eb5c5bdbe63e97fc407443e58b3b1b285484d960644",
+			"license": "Apache-2.0",
+			"urls": [
+				"bzz-raw://55734b28ea9c60d5e3000aac17f1ab3f6c40ff42b0bb32bc6c99881da877f123",
+				"dweb:/ipfs/QmaDqXVNSq6X67W6hdPuHdQedGwqAifJ8izKWhyhRU16T4"
+			]
+		},
+		"lib/lukso-foundry/src/LSP7/presets/LSP7CompatibleERC20MintableInitAbstract.sol": {
+			"keccak256": "0x2c90ef00fb3e1b544b5d60cb449c063a8bc271cacb5c7fe5577de4a0af385155",
+			"license": "Apache-2.0",
+			"urls": [
+				"bzz-raw://10b9a3174dfa51a84e2286877ad41ee3597960cab0e463110ad51e63a598ba3d",
+				"dweb:/ipfs/QmexreDYA8UXpk8rPsoRUny5Z9k3HHGHktXVYd6zn3mPkT"
+			]
+		},
+		"lib/lukso-foundry/src/LSP8/ILSP8IdentifiableDigitalAsset.sol": {
+			"keccak256": "0x9dc4fb50f9e4c84d504e293e3c58d61b2029e837990a658f60c68a54588331db",
+			"license": "Apache-2.0",
+			"urls": [
+				"bzz-raw://6cbf205399620aa7ea4379f81746f1c62af5b4928374e9de4ed7e59c45a048ba",
+				"dweb:/ipfs/QmdDjvAE72zGyMXuseH1Gmyoshi13aM5pd82sT8q5tTrH2"
+			]
+		},
+		"lib/lukso-foundry/src/LSP8/LSP8Constants.sol": {
+			"keccak256": "0xa016e5e31ba1b952ada7145ba87810f86700e23552ac40cd0d3e266aa674c1fe",
+			"license": "Apache-2.0",
+			"urls": [
+				"bzz-raw://d3ceefdf316dec755de3f5155b6c5dfb0f6b89e7d954b754d2ef039e802628ff",
+				"dweb:/ipfs/QmShtSbDgXWgz2jih9i5D5gaDMengY7nMv6pea9zvwPUww"
+			]
+		},
+		"lib/lukso-foundry/src/LSP8/LSP8Errors.sol": {
+			"keccak256": "0x84f3723b80c2070e48ff7760b607c634ab7184d3ad2b05ec434611f9144a071a",
+			"license": "Apache-2.0",
+			"urls": [
+				"bzz-raw://784106ece3a669b8fe50e3ff427b0f8a5de64e45b589d4cc74333ae8d2342146",
+				"dweb:/ipfs/QmXndwu6E74KaC3zC8stBv14tRhiC1E913vM3kYS46Ajav"
+			]
+		},
+		"lib/lukso-foundry/src/LSP8/LSP8IdentifiableDigitalAssetCore.sol": {
+			"keccak256": "0x87bead70a9229571ee83c770c4339f5942d474d9aa960501147cb335075fd518",
+			"license": "Apache-2.0",
+			"urls": [
+				"bzz-raw://2753139e306821df78e06925f6451bf14a4a36ca0a2eae92baff35baef82d21c",
+				"dweb:/ipfs/QmVRJ9ioQsSn43u3yu2G8U9nm6nbMB9ojCve6ff3JGuLa6"
+			]
+		},
+		"lib/lukso-foundry/src/LSP8/LSP8IdentifiableDigitalAssetInitAbstract.sol": {
+			"keccak256": "0x180e0ee5df76736cf5db74d532c7ca964f22b2e5d2db246ffc80e0afee9865fd",
+			"license": "Apache-2.0",
+			"urls": [
+				"bzz-raw://33e93278fcaad22ced24e25aacae228bc42bd8c904bc1e74271cb5053486e7a7",
+				"dweb:/ipfs/QmRqMxnRjuWevK6X3RB8mykz5bjXAfPZLKRupLEjDzVAHK"
+			]
+		},
+		"lib/lukso-foundry/src/LSP8/extensions/LSP8CompatibleERC721InitAbstract.sol": {
+			"keccak256": "0xf660f905e01ba97e3fea70100fb2647f46b3c5831eeeb90caf8871dae265ec77",
+			"license": "Apache-2.0",
+			"urls": [
+				"bzz-raw://ca592419a296ad9e9d4a9ddf4a3d7da2a4f2ce508288e08b86d95b77fc500d05",
+				"dweb:/ipfs/QmUtLay6gSorppVfdp4vM45tMwwaNsAhn9hZF1G8HukpRo"
+			]
+		},
+		"lib/lukso-foundry/src/LSP8/presets/LSP8CompatibleERC721MintableInit.sol": {
+			"keccak256": "0xac7604f81c840da59349c89aa8f867860426b4e1830a7d382c88f4cd2fd09808",
+			"license": "Apache-2.0",
+			"urls": [
+				"bzz-raw://54b518651b54fb136937e40edc4c038e7214a97c502064995f01acb0ece0da34",
+				"dweb:/ipfs/QmWckBpKoG8edHj1Kd7G29hM94mEJkRFULcCwDxE6Sg7Eo"
+			]
+		},
+		"lib/lukso-foundry/src/LSP8/presets/LSP8CompatibleERC721MintableInitAbstract.sol": {
+			"keccak256": "0x824a902b0921bb1ce7bc22b8aba606637801c91973e8a05fb52e2ad9e66ccff3",
+			"license": "Apache-2.0",
+			"urls": [
+				"bzz-raw://3c75f32db62ef495556a611ad25efe6fc82c3e5ac93b2d69dbe99ed49d9ec743",
+				"dweb:/ipfs/QmXXeyEsaeyV1TGP5TnQduPErhQA9xdnpzHrtwmtaamRrP"
+			]
+		},
+		"lib/openzeppelin-contracts/contracts/access/Ownable.sol": {
+			"keccak256": "0xff6d0bb2e285473e5311d9d3caacb525ae3538a80758c10649a4d61029b017bb",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://8ed324d3920bb545059d66ab97d43e43ee85fd3bd52e03e401f020afb0b120f6",
+				"dweb:/ipfs/QmfEckWLmZkDDcoWrkEvMWhms66xwTLff9DDhegYpvHo1a"
+			]
+		},
+		"lib/openzeppelin-contracts/contracts/interfaces/IERC165.sol": {
+			"keccak256": "0xde7e9fd9aee8d4f40772f96bb3b58836cbc6dfc0227014a061947f8821ea9724",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://11fea9f8bc98949ac6709f0c1699db7430d2948137aa94d5a9e95a91f61a710a",
+				"dweb:/ipfs/QmQdfRXxQjwP6yn3DVo1GHPpriKNcFghSPi94Z1oKEFUNS"
+			]
+		},
+		"lib/openzeppelin-contracts/contracts/interfaces/IERC721Receiver.sol": {
+			"keccak256": "0x12808acc0c2cbc0b9068755711fd79483b4f002e850d25e0e72e735765b6cd99",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://8fd1ab9e3091d4c4fc4b34c25b54df5c092c849c8c09d722a34186bd051b0890",
+				"dweb:/ipfs/QmUqykAZfKRHEkYVRmXKsFqvLwyUFPrukdWdAmXDkixJAL"
+			]
+		},
+		"lib/openzeppelin-contracts/contracts/proxy/Clones.sol": {
+			"keccak256": "0xd18408af8a91bedb3d56343eeb9b30eb852e6dea93a5e2d5c6db9ca4cb905155",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://061475b7302a732dc598907790f407417551c2b13e89daa57b3698489ef5484b",
+				"dweb:/ipfs/QmdX5qmk3VSniSErFuD4aVawQxUi2MuUbP7spPcHddPfcX"
+			]
+		},
+		"lib/openzeppelin-contracts/contracts/token/ERC20/IERC20.sol": {
+			"keccak256": "0xc6a8ff0ea489379b61faa647490411b80102578440ab9d84e9a957cc12164e70",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://0ea104e577e63faea3b69c415637e99e755dcbf64c5833d7140c35a714d6d90c",
+				"dweb:/ipfs/Qmau6x4Ns9XdyynRCNNp3RhLqijJjFm7z5fyZazfYFGYdq"
+			]
+		},
+		"lib/openzeppelin-contracts/contracts/token/ERC20/extensions/IERC20Metadata.sol": {
+			"keccak256": "0xaa761817f6cd7892fcf158b3c776b34551cde36f48ff9703d53898bc45a94ea2",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://0ad7c8d4d08938c8dfc43d75a148863fb324b80cf53e0a36f7e5a4ac29008850",
+				"dweb:/ipfs/QmcrhfPgVNf5mkdhQvy1pMv51TFokD3Y4Wa5WZhFqVh8UV"
+			]
+		},
+		"lib/openzeppelin-contracts/contracts/token/ERC721/IERC721.sol": {
+			"keccak256": "0x5ef46daa3b58ef2702279d514780316efaa952915ee1aa3396f041ee2982b0b4",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://2f8f2a76e23b02fc69e8cd24c3cb47da6c7af3a2d6c3a382f8ac25c6e094ade7",
+				"dweb:/ipfs/QmPV4ZS4tPVv4mTCf9ejyZ1ai57EEibDRj7mN2ARDCLV5n"
+			]
+		},
+		"lib/openzeppelin-contracts/contracts/token/ERC721/IERC721Receiver.sol": {
+			"keccak256": "0x7f7a26306c79a65fb8b3b6c757cd74660c532cd8a02e165488e30027dd34ca49",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://d01e0b2b837ee2f628545e54d8715b49c7ef2befd08356c2e7f6c50dde8a1c22",
+				"dweb:/ipfs/QmWBAn6y2D1xgftci97Z3qR9tQnkvwQpYwFwkTvDMvqU4i"
+			]
+		},
+		"lib/openzeppelin-contracts/contracts/token/ERC721/extensions/IERC721Metadata.sol": {
+			"keccak256": "0x37d1aaaa5a2908a09e9dcf56a26ddf762ecf295afb5964695937344fc6802ce1",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://ed0bfc1b92153c5000e50f4021367b931bbe96372ac6facec3c4961b72053d02",
+				"dweb:/ipfs/Qmbwp8VDerjS5SV1quwHH1oMXxPQ93fzfLVqJ2RCqbowGE"
+			]
+		},
+		"lib/openzeppelin-contracts/contracts/utils/Context.sol": {
+			"keccak256": "0x75a4ee64c68dbd5f38bddd06e664a64c8271b4caa554fb6f0607dfd672bb4bf3",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://0c4e6cb30d3601e2f7af5af09e265508147cb275a8dcd99d6f7363645cc56867",
+				"dweb:/ipfs/QmNgFkoXNWoUbAyw71rr1sKQ95Rj2GfvYiWg79xEYDn2NY"
+			]
+		},
+		"lib/openzeppelin-contracts/contracts/utils/introspection/ERC165.sol": {
+			"keccak256": "0x9e8778b14317ba9e256c30a76fd6c32b960af621987f56069e1e819c77c6a133",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://1777404f1dcd0fac188e55a288724ec3c67b45288e49cc64723e95e702b49ab8",
+				"dweb:/ipfs/QmZFdC626GButBApwDUvvTnUzdinevC3B24d7yyh57XkiA"
+			]
+		},
+		"lib/openzeppelin-contracts/contracts/utils/introspection/ERC165Checker.sol": {
+			"keccak256": "0xac3d50e321a48a40b4496970ce725900f13aeb2255b7c1203f5adbe98c4a911a",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://1d7b235b578347dce2d831a76f122e820a7db7e73fd2e47f13bafdcd61c5b066",
+				"dweb:/ipfs/QmVAELwambfJa55HfiCoz1kFFh7iYwRYeW5x8si6AFM4iX"
+			]
+		},
+		"lib/openzeppelin-contracts/contracts/utils/introspection/IERC165.sol": {
+			"keccak256": "0x4296879f55019b23e135000eb36896057e7101fb7fb859c5ef690cf14643757b",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://87b3541437c8c443ccd36795e56a338ed12855eec17f8da624511b8d1a7e14df",
+				"dweb:/ipfs/QmeJQCtZrQjtJLr6u7ZHWeH3pBnjtLWzvRrKViAi7UZqxL"
+			]
+		},
+		"lib/openzeppelin-contracts/contracts/utils/structs/EnumerableSet.sol": {
+			"keccak256": "0x86c1470cbfd878491e5de030072b647352d36bd27122cffb928970b1945282aa",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://ad85dd393ee0a1917c57046abc5155f51f77844b2c6a42c05c1b8dd26d6ff3c1",
+				"dweb:/ipfs/QmNqYc8To2NdnpP6E1tGz7t6A7beuENde5yovwov5pW1fA"
+			]
+		},
+		"solidity-bytes-utils/contracts/BytesLib.sol": {
+			"keccak256": "0xf75784dfc94ea43668eb195d5690a1dde1b6eda62017e73a3899721583821d29",
+			"license": "Unlicense",
+			"urls": [
+				"bzz-raw://ca16cef8b94f3ac75d376489a668618f6c4595a906b939d674a883f4bf426014",
+				"dweb:/ipfs/QmceGU7qhyFLSejaj6i4dEtMzXDCSF3aYDtW1UeKjXQaRn"
+			]
+		},
+		"src/LSP7Bridged.sol": {
+			"keccak256": "0x49f96c4bb819ce72964056546c1bb75120667d461ae1b34f9aac1f71d8c2188d",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://e6c65832d75c6177c264b0aa6bb6ddcf1cab697f1ee0d7c25020f8ceb2fd70a9",
+				"dweb:/ipfs/QmdohEQTkd7oe8fKUbxRxnpvexC8SRMAvgKPagbKZjnmP5"
+			]
+		},
+		"src/LSP8Bridged.sol": {
+			"keccak256": "0xe48222713032313ec739ea54ab0aadf6aacc7295e038b652fd98011f59a0215f",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://aa1be23629d0cc8d7f8b9ccfdec0fa274c746a7a042d58b552d8332ce5305a7c",
+				"dweb:/ipfs/QmT8ghNzKB68g1ovEzzgJRhbpxMa8e2mErcV7YQ6KM6nWt"
+			]
+		},
+		"src/TokenFactory.sol": {
+			"keccak256": "0xc5e40bcaa3a62e036f02485b30c0fbded5bf5f0b71a05490bab4892750897394",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://049749497634daa782f3dc02c9d90ca40fbe3f7eaf234251a8a0954a111ef6a1",
+				"dweb:/ipfs/QmTjLgL6is6Cv3o549UtkEqxmc9AMQuaS8p5tGFcU7i3Gy"
+			]
+		},
+		"src/interfaces/ITokenFactory.sol": {
+			"keccak256": "0x56b6f6f6e3c51b11fc0fbbc303942dfd65f4a7f674781289bf4c7702b716b49d",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://f0f7fcfcdeac3986c454a656dd18989763d705e83f1f6e10e4391aa842723e6a",
+				"dweb:/ipfs/QmZWXRDpdzxkh7BcZthqNV6vR37hq1ttyN4Lxb1hwJH3Yi"
+			]
+		}
+	},
+	"version": 1
+}

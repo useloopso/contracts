@@ -77,7 +77,7 @@ contract Loopso is AccessControl, ILoopso {
         emit TokensBridged(_transferID);
     }
 
-    function bridgeNonFungibleTokens(address _token, uint256 _tokenID, uint256 _dstChain, address _dstAddress) external {
+    function bridgeNonFungibleTokens(address _token, uint256 _tokenID, string memory tokenURI, uint256 _dstChain, address _dstAddress) external {
         // TODO
     }
 

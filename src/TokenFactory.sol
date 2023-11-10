@@ -7,11 +7,13 @@ import "./interfaces/ITokenFactory.sol";
 import "./LSP7Bridged.sol";
 import "./LSP8Bridged.sol";
 
-contract LSPFactory is Ownable, ITokenFactory {
+contract TokenFactory is Ownable, ITokenFactory {
     address public bridge;
     bytes32 public constant BRIDGE_ROLE = keccak256("BRIDE_ROLE");
     address public masterLSP7;
     address public masterLSP8;
+    address[] public lsp7s;
+    address[] public lsp8s;
 
     constructor(address _masterLSP7, address _masterLSP8, address _bridge) Ownable(msg.sender) {
         masterLSP7 = _masterLSP7;
@@ -39,6 +41,7 @@ contract LSPFactory is Ownable, ITokenFactory {
     function createNewLSP7(string memory _name, string memory _symbol) external onlyBridge returns (address) {
         LSP7Bridged _lsp7 = LSP7Bridged(payable(Clones.clone(masterLSP7)));
         _lsp7.initialize(_name, _symbol, bridge);
+        lsp7s.push(address(_lsp7));
         emit NewLSP7(address(_lsp7));
         return address(_lsp7);
     }
@@ -46,6 +49,7 @@ contract LSPFactory is Ownable, ITokenFactory {
     function createNewLSP8(string memory _name, string memory _symbol) external onlyBridge returns (address) {
         LSP8Bridged _lsp8 = LSP8Bridged(payable(Clones.clone(masterLSP8)));
         _lsp8.initialize(_name, _symbol, bridge, 0);
+        lsp8s.push(address(_lsp8));
         emit NewLSP8(address(_lsp8));
         return address(_lsp8);
     }
