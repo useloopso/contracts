@@ -34,22 +34,27 @@ interface ILoopso {
     struct TokenTransferNonFungible {
         TokenTransferBase tokenTransfer;
         uint256 tokenID;
+        string tokenURI;
     }
 
     /** @dev Emitted by attestToken. Means a new token is supported by the bridge. */
-    event TokenAttested(bytes32 indexed tokenID);
+    event TokenAttested(bytes32 indexed attestationID);
 
     /** @dev Emitted by bridgeTokens. transferID is used by the relayer as it helps locate the transfer details. */
-    event TokensBridged(bytes32 indexed transferID);
+    event TokensBridged(bytes32 indexed transferID, TokenType indexed tokenType);
 
     /** @dev Emitted by bridgeTokensBack. Relayer should use indexed params to release the tokens on the other chain. */
-    event TokensBridgedBack(uint256 indexed amount, address indexed to, bytes32 indexed tokenID);
+    event TokensBridgedBack(uint256 indexed amount, address indexed to, bytes32 indexed attestationID);
+
+    event NonFungibleTokensBridgedBack(uint256 indexed tokenId, address indexed to, bytes32 indexed attestationID);
 
     /** @dev Emitted by releaseTokens. This means briding back wrapped tokens to the source chain was successful. */
     event TokensReleased(uint256 indexed amount, address indexed to, address indexed token);
 
     /** @dev Emitted by releaseWrappedTokens. This briding tokens was succesful. */
-    event WrappedTokensReleased(uint256 indexed amount, address indexed to, bytes32 indexed tokenID);
+    event WrappedTokensReleased(uint256 indexed amount, address indexed to, bytes32 indexed attestationID);
+    
+    event WrappedNonFungibleTokensReleased(uint256 indexed tokenId, address indexed to, bytes32 indexed attestationID);
 
     /**
     @dev Called by bridge admin on the destination chain to attest a token.
@@ -76,9 +81,9 @@ interface ILoopso {
     @dev Burns _amount of locked tokens on the destination chain, emits an event that relayer picks up.
     @param _amount Amount of tokens to bridge back.
     @param _to Address the original tokens will be released to.
-    @param _tokenID ID of the TokenAttestation struct we use to identify a chain A token on chain B.
+    @param _attestationID ID of the TokenAttestation struct we use to identify a chain A token on chain B.
      */
-    function bridgeTokensBack(uint256 _amount, address _to, bytes32 _tokenID) external;
+    function bridgeTokensBack(uint256 _amount, address _to, bytes32 _attestationID) external;
 
     /**
     @dev Called by the relayer after it picks up a TokensBridgedBackEvent.
@@ -94,7 +99,7 @@ interface ILoopso {
     It mints wrapped tokens equivalent to the tokens locked up on the source chain.
     @param _amount Amount of wrapped tokens to mint.
     @param _to The address the wrapped tokens will be minted to.
-    @param _tokenID The ID we use to identify a chain A token on chain B.
+    @param _attestationID The ID we use to identify a chain A token on chain B.
      */
-    function releaseWrappedTokens(uint256 _amount, address _to, bytes32 _tokenID) external;
+    function releaseWrappedTokens(uint256 _amount, address _to, bytes32 _attestationID) external;
 }

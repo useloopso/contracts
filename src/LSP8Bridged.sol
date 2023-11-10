@@ -5,13 +5,15 @@ import "@openzeppelin/contracts/utils/Strings.sol";
 import "@lukso/LSP8/presets/LSP8CompatibleERC721MintableInit.sol";
 import "@lukso/LSP8/LSP8Errors.sol";
 import "@lukso/LSP8/LSP8Constants.sol";
+import "./interfaces/ILSP8Bridged.sol";
 
-contract LSP8Bridged is LSP8CompatibleERC721MintableInit {
-    function burn(bytes32 tokenId, bytes memory data) public {
-        if (!_isOperatorOrOwner(msg.sender, tokenId)) {
-            revert LSP8NotTokenOperator(tokenId, msg.sender);
+contract LSP8Bridged is LSP8CompatibleERC721MintableInit, ILSP8Bridged {
+    function burn(uint256 tokenId, bytes memory data) public {
+        bytes32 _bytesTokenId = bytes32(tokenId);
+        if (!_isOperatorOrOwner(msg.sender, _bytesTokenId)) {
+            revert LSP8NotTokenOperator(_bytesTokenId, msg.sender);
         }
-        _burn(tokenId, data);
+        _burn(_bytesTokenId, data);
     }
 
     function mintWithTokenURI(address to, uint256 tokenId, string memory _tokenURI) public onlyOwner {
