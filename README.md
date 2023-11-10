@@ -11,7 +11,10 @@ LajosNFT: 0xdc1C3734165aB9f0336eb6d10feCFD62c9CF28cc
 Loopso.sol: 0x6C1aeA2C4933f040007a43Bc5683B0e068452c46
 TokenFactory.sol: 0x2B798E5a0cE8018EDd5532fF4899E2f241271ab0     
 WrappedLajo$Token: 0x4EFCc784eA3E259bdA3c6311D448416959B9bB9C     
-WrappedLajosNFT: 0xf60b63DbA61F14647D9a146113548fB341A87d12      
+WrappedLajosNFT: 0xf60b63DbA61F14647D9a146113548fB341A87d12   
+     
+AttestationID on Lukso for Lajo$Token: 0xa458b7ff0eb3c12e6e58c218f2a3111ab6cf26f757548bce2c887731f419675c      
+AttestationID on Lukso for LajosNFT: 0x16521564d9ada82ba73fddb52616ffd7adc98ff5efe46035f86429e55cb66736      
      
 ## Token attestation:    
 - Chain B must be able to identify a Chain A token   
