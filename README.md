@@ -1,5 +1,18 @@
 # Loopso smart contracts
 
+## Contract addresses:     
+- Mumbai:     
+Loopso.sol: 0xBb8d476fF7BEdCf2Eded931179196a17A3370A86      
+TokenFactory.sol: 0xC97d99Db1be60e9b634E8aA99CBe533bbb02DDD0     
+Lajo$Token: 0x8cBF42B6590614AbE7AB5ffc89aF153F5d620fC3     
+LajosNFT: 0x7871F6Ec73058bC13fe51307938B800E0036AB85     
+     
+- LUKSO:
+Loopso.sol: 0x6C1aeA2C4933f040007a43Bc5683B0e068452c46
+TokenFactory.sol: 0x2B798E5a0cE8018EDd5532fF4899E2f241271ab0     
+WrappedLajo$Token: 0x4EFCc784eA3E259bdA3c6311D448416959B9bB9C     
+WrappedLajosNFT: 0x58C68DDCd8f1832b9BEEb0E3A08a5BefBcaBf639      
+     
 ## Token attestation:    
 - Chain B must be able to identify a Chain A token   
 - addresses don't mean anything since they can differ from chain-to-chain    
