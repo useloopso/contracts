@@ -14,6 +14,7 @@ import "./interfaces/ILSP8Bridged.sol";
 contract Loopso is AccessControl, ILoopso, IERC721Receiver {
     bytes32 public constant RELAYER_ROLE = keccak256("RELAYER_ROLE");
 
+    bytes32[] public attestationIds;
     mapping(bytes32 => TokenAttestation) public attestedTokens; // from token ID to TokenAttestation on dest chain
     mapping(bytes32  => TokenTransfer) public tokenTransfers; // from transfer ID to transfer on source chain
     mapping(bytes32 => TokenTransferNonFungible) public tokenTransfersNonFungible;
@@ -51,6 +52,7 @@ contract Loopso is AccessControl, ILoopso, IERC721Receiver {
         attestation.wrappedTokenAddress = _newTokenAddress;
         bytes32 attestationID = keccak256(abi.encodePacked(attestation.tokenAddress, attestation.tokenChain));
         attestedTokens[attestationID] = attestation;
+        attestationIds.push(attestationID);
         emit TokenAttested(attestationID);
     }
 
@@ -161,6 +163,33 @@ contract Loopso is AccessControl, ILoopso, IERC721Receiver {
     /** @dev See ILoopso.sol - releaseNonFungibleTokens */
     function releaseNonFungibleTokens(uint256 _tokenId, address _to, address _token) external {
         IERC721(_token).safeTransferFrom(address(this), _to, _tokenId);
+    }
+
+    /* ============================================== */
+    /*  =========== CONVENIENCE GETTERS ============  */
+    /* ============================================== */
+    /** @dev See ILoopso.sol - isTokenSupported */
+    function isTokenSupported(address _tokenAddress, uint256 _tokenChain) external view returns (bool) {
+        if (_tokenAddress == address(0)) {
+            return false;
+        }
+        bytes32 attestationID = keccak256(abi.encodePacked(_tokenAddress, _tokenChain));
+        TokenAttestation memory attestedToken = attestedTokens[attestationID];
+        return _tokenAddress == attestedToken.tokenAddress && _tokenChain == attestedToken.tokenChain;
+    }
+
+    /** @dev See ILoopso.sol - getSupportedTokensLength */
+    function getSupportedTokensLength() external view returns (uint256) {
+        return attestationIds.length;
+    }
+
+    /** @dev See ILoopso.sol - getAllSupportedTokens */
+    function getAllSupportedTokens() external view returns (TokenAttestation[] memory) {
+        TokenAttestation[] memory attestations = new TokenAttestation[](attestationIds.length);
+        for (uint256 i = 0; i < attestationIds.length; i++) {
+            attestations[i] = attestedTokens[attestationIds[i]];
+        }
+        return attestations;
     }
 
     /* ============================================== */

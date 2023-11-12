@@ -225,4 +225,23 @@ interface ILoopso {
     @param _token The address of the NFT on the source chain
      */
     function releaseNonFungibleTokens(uint256 _tokenId, address _to, address _token) external;    
+
+    /* ============================================== */
+    /*  =========== CONVENIENCE GETTERS ============  */
+    /* ============================================== */
+    /**
+    @dev Check whether a token from a given chain is supported by the bridge.
+    @param _tokenAddress The address of the token.
+    @param _tokenChain The chain ID on which the token is deployed.
+     */
+    function isTokenSupported(address _tokenAddress, uint256 _tokenChain) external view returns (bool);
+
+    /** @dev Returns the total number of tokens supported by the bridge. */
+    function getSupportedTokensLength() external view returns (uint256);
+
+    /** 
+    @dev Get all supported tokens.
+    @return TokenAttestation[] array
+     */
+    function getAllSupportedTokens() external view returns (TokenAttestation[] memory);
 }
