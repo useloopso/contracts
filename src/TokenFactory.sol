@@ -38,6 +38,11 @@ contract TokenFactory is Ownable, ITokenFactory {
         emit MasterLSP8Set(masterLSP8);
     }
 
+    function setBridge(address _bridge) external onlyOwner {
+        require(_bridge != address(0), "Can't set bridge to zero address");
+        bridge = _bridge;
+    }
+
     function createNewLSP7(string memory _name, string memory _symbol) external onlyBridge returns (address) {
         LSP7Bridged _lsp7 = LSP7Bridged(payable(Clones.clone(masterLSP7)));
         _lsp7.initialize(_name, _symbol, bridge);
