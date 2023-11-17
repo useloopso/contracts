@@ -239,6 +239,9 @@ interface ILoopso {
     /** @dev Returns the total number of tokens supported by the bridge. */
     function getSupportedTokensLength() external view returns (uint256);
 
+    /** @dev Returns the attestation details for the token if it is a wrapped token, of not it returns an empty TokenAttestation struct. */
+    function wrappedTokenInfo(address _wrappedToken) external returns (TokenAttestation memory);
+
     /** 
     @dev Get all supported tokens.
     @return TokenAttestation[] array

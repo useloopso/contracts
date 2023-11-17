@@ -15,6 +15,7 @@ contract Loopso is AccessControl, ILoopso, IERC721Receiver {
     bytes32 public constant RELAYER_ROLE = keccak256("RELAYER_ROLE");
 
     bytes32[] public attestationIds;
+    mapping(address => bytes32) wrappedTokenToAttestationId; 
     mapping(bytes32 => TokenAttestation) public attestedTokens; // from token ID to TokenAttestation on dest chain
     mapping(bytes32  => TokenTransfer) public tokenTransfers; // from transfer ID to transfer on source chain
     mapping(bytes32 => TokenTransferNonFungible) public tokenTransfersNonFungible;
@@ -51,8 +52,13 @@ contract Loopso is AccessControl, ILoopso, IERC721Receiver {
 
         attestation.wrappedTokenAddress = _newTokenAddress;
         bytes32 attestationID = keccak256(abi.encodePacked(attestation.tokenAddress, attestation.tokenChain));
+        
         attestedTokens[attestationID] = attestation;
+
+        wrappedTokenToAttestationId[_newTokenAddress] = attestationID;
+
         attestationIds.push(attestationID);
+
         emit TokenAttested(attestationID);
     }
 
@@ -190,6 +196,10 @@ contract Loopso is AccessControl, ILoopso, IERC721Receiver {
             attestations[i] = attestedTokens[attestationIds[i]];
         }
         return attestations;
+    }
+
+    function wrappedTokenInfo(address _wrappedToken) external view returns (TokenAttestation memory) {
+        return attestedTokens[wrappedTokenToAttestationId[_wrappedToken]];
     }
 
     /* ============================================== */
