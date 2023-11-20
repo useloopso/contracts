@@ -11,6 +11,17 @@ import "./interfaces/ILSP7Bridged.sol";
 import "./interfaces/ILSP8Bridged.sol";
 
 // TODO implement fee mechanism
+/* 
+TODO:
+- fee structure:
+    - fungible: 0.5% on token transfer amount
+        - min max fee -> 0 - 1%
+        - if owner of approved NFT no bridging fee <- can be turned off
+    - non-fungible:
+        - flat fee in chains base token
+        min max 0 - 1 %
+
+ */
 contract Loopso is AccessControl, ILoopso, IERC721Receiver {
     bytes32 public constant RELAYER_ROLE = keccak256("RELAYER_ROLE");
 
@@ -41,7 +52,7 @@ contract Loopso is AccessControl, ILoopso, IERC721Receiver {
     /*  =============  ADD NEW TOKEN  ==============  */
     /* ============================================== */
     /** @dev See ILoopso.sol - attestToken */
-    function attestToken(TokenAttestation memory attestation) external onlyAdmin {
+    function attestToken(TokenAttestation memory attestation) external onlyRelayer {
         address _newTokenAddress;
 
         if (attestation.tokenType == TokenType.Fungible) {
@@ -72,6 +83,7 @@ contract Loopso is AccessControl, ILoopso, IERC721Receiver {
         uint256 _dstChain,
         address _dstAddress
     ) external {
+        require(!isWrappedToken(_token), "This is a wrapped token. Call bridgeTokensBack instead.");
         bool success = IERC20(_token).transferFrom(msg.sender, address(this), _amount);
         require(success, "Transfer failed. Make sure bridge is approved to spend tokens.");
       
@@ -125,6 +137,7 @@ contract Loopso is AccessControl, ILoopso, IERC721Receiver {
     /* ============================================== */
     /** @dev See ILoopso.sol - bridgeNonFungibleTokens */
     function bridgeNonFungibleTokens(address _token, uint256 _tokenID, string memory tokenURI, uint256 _dstChain, address _dstAddress) external {
+        require(!isWrappedToken(_token), "This is a wrapped token. Call bridgeNonFungibleTokensBack instead.");
         // transfer IERC721 from user to bridge
         IERC721(_token).safeTransferFrom(msg.sender, address(this), _tokenID);
         // create token transfer struct
@@ -196,6 +209,10 @@ contract Loopso is AccessControl, ILoopso, IERC721Receiver {
             attestations[i] = attestedTokens[attestationIds[i]];
         }
         return attestations;
+    }
+
+    function isWrappedToken(address _token) public view returns (bool) {
+        return wrappedTokenToAttestationId[_token] != bytes32(0);
     }
 
     function wrappedTokenInfo(address _wrappedToken) external view returns (TokenAttestation memory) {
