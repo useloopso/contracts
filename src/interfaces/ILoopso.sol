@@ -197,7 +197,7 @@ interface ILoopso {
     @param _dstChain Destination chain ID
     @param _dstAddress Address that will receive the ERC721 on the destination chain     
      */
-    function bridgeNonFungibleTokens(address _token, uint256 _tokenID, string memory tokenURI, uint256 _dstChain, address _dstAddress) external;
+    function bridgeNonFungibleTokens(address _token, uint256 _tokenID, string memory tokenURI, uint256 _dstChain, address _dstAddress) external payable;
 
     /**
     @dev Burns the wrapped ERC721 with token ID on the destination chain, and emits an event that the relayer picks up.

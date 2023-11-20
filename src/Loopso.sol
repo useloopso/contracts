@@ -9,27 +9,20 @@ import "./interfaces/ILoopso.sol";
 import "./interfaces/ITokenFactory.sol";
 import "./interfaces/ILSP7Bridged.sol";
 import "./interfaces/ILSP8Bridged.sol";
+import "./Constants.sol";
 
-// TODO implement fee mechanism
-/* 
-TODO:
-- fee structure:
-    - fungible: 0.5% on token transfer amount
-        - min max fee -> 0 - 1%
-        - if owner of approved NFT no bridging fee <- can be turned off
-    - non-fungible:
-        - flat fee in chains base token
-        min max 0 - 1 %
+// TODO implement bridging for chains base token
+contract Loopso is Constants, AccessControl, ILoopso, IERC721Receiver {
+    address public feeReceiver;
 
- */
-contract Loopso is AccessControl, ILoopso, IERC721Receiver {
-    bytes32 public constant RELAYER_ROLE = keccak256("RELAYER_ROLE");
+    address public discountNft;
 
     bytes32[] public attestationIds;
-    mapping(address => bytes32) wrappedTokenToAttestationId; 
+    mapping(address => bytes32) wrappedTokenToAttestationId;
     mapping(bytes32 => TokenAttestation) public attestedTokens; // from token ID to TokenAttestation on dest chain
-    mapping(bytes32  => TokenTransfer) public tokenTransfers; // from transfer ID to transfer on source chain
-    mapping(bytes32 => TokenTransferNonFungible) public tokenTransfersNonFungible;
+    mapping(bytes32 => TokenTransfer) public tokenTransfers; // from transfer ID to transfer on source chain
+    mapping(bytes32 => TokenTransferNonFungible)
+        public tokenTransfersNonFungible;
 
     ITokenFactory public tokenFactory;
 
@@ -52,18 +45,28 @@ contract Loopso is AccessControl, ILoopso, IERC721Receiver {
     /*  =============  ADD NEW TOKEN  ==============  */
     /* ============================================== */
     /** @dev See ILoopso.sol - attestToken */
-    function attestToken(TokenAttestation memory attestation) external onlyRelayer {
+    function attestToken(
+        TokenAttestation memory attestation
+    ) external onlyRelayer {
         address _newTokenAddress;
 
         if (attestation.tokenType == TokenType.Fungible) {
-            _newTokenAddress = tokenFactory.createNewLSP7(attestation.name, attestation.symbol);
+            _newTokenAddress = tokenFactory.createNewLSP7(
+                attestation.name,
+                attestation.symbol
+            );
         } else {
-            _newTokenAddress = tokenFactory.createNewLSP8(attestation.name, attestation.symbol);
+            _newTokenAddress = tokenFactory.createNewLSP8(
+                attestation.name,
+                attestation.symbol
+            );
         }
 
         attestation.wrappedTokenAddress = _newTokenAddress;
-        bytes32 attestationID = keccak256(abi.encodePacked(attestation.tokenAddress, attestation.tokenChain));
-        
+        bytes32 attestationID = keccak256(
+            abi.encodePacked(attestation.tokenAddress, attestation.tokenChain)
+        );
+
         attestedTokens[attestationID] = attestation;
 
         wrappedTokenToAttestationId[_newTokenAddress] = attestationID;
@@ -83,10 +86,32 @@ contract Loopso is AccessControl, ILoopso, IERC721Receiver {
         uint256 _dstChain,
         address _dstAddress
     ) external {
-        require(!isWrappedToken(_token), "This is a wrapped token. Call bridgeTokensBack instead.");
-        bool success = IERC20(_token).transferFrom(msg.sender, address(this), _amount);
-        require(success, "Transfer failed. Make sure bridge is approved to spend tokens.");
-      
+        require(
+            !isWrappedToken(_token),
+            "This is a wrapped token. Call bridgeTokensBack instead."
+        );
+
+        bool hasDiscountNft = IERC721(discountNft).balanceOf(msg.sender) > 0;
+        
+        uint256 _bridgeFee = hasDiscountNft ? 0 : calculateFungibleFee(_amount);
+
+        uint256 _amountAfterFee = _amount - _bridgeFee;
+
+        bool success = IERC20(_token).transferFrom(
+            msg.sender,
+            address(this),
+            _amountAfterFee
+        );
+        require(
+            success,
+            "Transfer failed. Make sure bridge is approved to spend tokens."
+        );
+
+        if (!hasDiscountNft) {
+            success = IERC20(_token).transferFrom(msg.sender, address(this), _bridgeFee);
+            require(success, "Fee transfer failed. Make sure the bridge is approved to spend tokens.");
+        }
+
         TokenTransfer memory _transfer = TokenTransfer(
             TokenTransferBase(
                 block.timestamp,
@@ -96,38 +121,76 @@ contract Loopso is AccessControl, ILoopso, IERC721Receiver {
                 _dstAddress,
                 _token
             ),
-            _amount
+            _amountAfterFee
         );
-        bytes32 _transferID = keccak256(abi.encodePacked(block.timestamp, block.chainid, msg.sender,_dstChain,_dstAddress,_token,_amount));
-        
+
+        bytes32 _transferID = keccak256(
+            abi.encodePacked(
+                block.timestamp,
+                block.chainid,
+                msg.sender,
+                _dstChain,
+                _dstAddress,
+                _token,
+                _amount
+            )
+        );
+
         tokenTransfers[_transferID] = _transfer;
-   
+
         emit TokensBridged(_transferID, TokenType.Fungible);
     }
 
     /** @dev See ILoopso.sol - bridgeTokensBack */
-    function bridgeTokensBack(uint256 _amount, address _to, bytes32 _attestationID) external {
+    function bridgeTokensBack(
+        uint256 _amount,
+        address _to,
+        bytes32 _attestationID
+    ) external {
         TokenAttestation memory attestedToken = attestedTokens[_attestationID];
-        require(attestedToken.tokenAddress != address(0), "Invalid _attestationID");
-      
-        ILSP7Bridged(attestedToken.wrappedTokenAddress).burn(msg.sender, _amount, new bytes(0));
-      
+        require(
+            attestedToken.tokenAddress != address(0),
+            "Invalid _attestationID"
+        );
+
+        ILSP7Bridged(attestedToken.wrappedTokenAddress).burn(
+            msg.sender,
+            _amount,
+            new bytes(0)
+        );
+
         emit TokensBridgedBack(_amount, _to, _attestationID);
     }
 
     /** @dev See ILoopso.sol - releaseTokens */
-    function releaseTokens(uint256 _amount, address _to, address _token) external onlyRelayer {
+    function releaseTokens(
+        uint256 _amount,
+        address _to,
+        address _token
+    ) external onlyRelayer {
         bool success = IERC20(_token).transfer(_to, _amount);
         require(success, "Failed to payout tokens");
     }
 
     /** @dev See ILoopso.sol - releaseWrappedTokens */
-    function releaseWrappedTokens(uint256 _amount, address _to, bytes32 _attestationID) external onlyRelayer {
+    function releaseWrappedTokens(
+        uint256 _amount,
+        address _to,
+        bytes32 _attestationID
+    ) external onlyRelayer {
         // 1. get the attested token
         TokenAttestation memory attestedToken = attestedTokens[_attestationID];
-        require(attestedToken.tokenAddress != address(0), "Invalid _attestationID");
+        require(
+            attestedToken.tokenAddress != address(0),
+            "Invalid _attestationID"
+        );
         // 2. mint amount of tokens to the _to address
-        ILSP7Bridged(attestedToken.wrappedTokenAddress).mint(_to, _amount, true, new bytes(0));
+        ILSP7Bridged(attestedToken.wrappedTokenAddress).mint(
+            _to,
+            _amount,
+            true,
+            new bytes(0)
+        );
         // 3. emit event
         emit WrappedTokensReleased(_amount, _to, _attestationID);
     }
@@ -136,12 +199,29 @@ contract Loopso is AccessControl, ILoopso, IERC721Receiver {
     /*  =============  BRIDGE ERC721  ==============  */
     /* ============================================== */
     /** @dev See ILoopso.sol - bridgeNonFungibleTokens */
-    function bridgeNonFungibleTokens(address _token, uint256 _tokenID, string memory tokenURI, uint256 _dstChain, address _dstAddress) external {
-        require(!isWrappedToken(_token), "This is a wrapped token. Call bridgeNonFungibleTokensBack instead.");
+    function bridgeNonFungibleTokens(
+        address _token,
+        uint256 _tokenID,
+        string memory tokenURI,
+        uint256 _dstChain,
+        address _dstAddress
+    ) external payable {
+        require(
+            !isWrappedToken(_token),
+            "This is a wrapped token. Call bridgeNonFungibleTokensBack instead."
+        );
+
+        bool hasDiscountNft = IERC721(discountNft).balanceOf(msg.sender) > 0;
+        if (!hasDiscountNft) {
+            require(msg.value == FEE_NON_FUNGIBLE, "Pls pay fee ser we poor");
+            (bool success, ) = feeReceiver.call{value: FEE_NON_FUNGIBLE}("");
+            require(success, "Fee payment failed.");
+        }
+
         // transfer IERC721 from user to bridge
         IERC721(_token).safeTransferFrom(msg.sender, address(this), _tokenID);
         // create token transfer struct
-        TokenTransferNonFungible memory _transfer  = TokenTransferNonFungible(
+        TokenTransferNonFungible memory _transfer = TokenTransferNonFungible(
             TokenTransferBase(
                 block.timestamp,
                 block.chainid,
@@ -153,7 +233,18 @@ contract Loopso is AccessControl, ILoopso, IERC721Receiver {
             _tokenID,
             tokenURI
         );
-        bytes32 _transferID = keccak256(abi.encodePacked(block.timestamp, block.chainid, msg.sender, _dstChain, _dstAddress, _token, _tokenID));
+
+        bytes32 _transferID = keccak256(
+            abi.encodePacked(
+                block.timestamp,
+                block.chainid,
+                msg.sender,
+                _dstChain,
+                _dstAddress,
+                _token,
+                _tokenID
+            )
+        );
         // save token transfer struct
         tokenTransfersNonFungible[_transferID] = _transfer;
         // emit event
@@ -161,26 +252,52 @@ contract Loopso is AccessControl, ILoopso, IERC721Receiver {
     }
 
     /** @dev See ILoopso.sol - bridgeNonFungibleTokensBack */
-    function bridgeNonFungibleTokensBack(uint256 _tokenId, address _to, bytes32 _attestationID) external {
+    function bridgeNonFungibleTokensBack(
+        uint256 _tokenId,
+        address _to,
+        bytes32 _attestationID
+    ) external {
         TokenAttestation memory attestedToken = attestedTokens[_attestationID];
-        require(attestedToken.tokenAddress != address(0), "Invalid _attestationID");
-        ILSP8Bridged(attestedToken.wrappedTokenAddress).burn(_tokenId, new bytes(0));
+        require(
+            attestedToken.tokenAddress != address(0),
+            "Invalid _attestationID"
+        );
+        ILSP8Bridged(attestedToken.wrappedTokenAddress).burn(
+            _tokenId,
+            new bytes(0)
+        );
         emit NonFungibleTokensBridgedBack(_tokenId, _to, _attestationID);
     }
 
     /** @dev See ILoopso.sol - releaseWrappedNonFungibleTokens */
-    function releaseWrappedNonFungibleTokens(uint256 _tokenId, string calldata _tokenURI, address _to, bytes32 _attestationID) external {
+    function releaseWrappedNonFungibleTokens(
+        uint256 _tokenId,
+        string calldata _tokenURI,
+        address _to,
+        bytes32 _attestationID
+    ) external {
         // 1. get the attested token
         TokenAttestation memory attestedToken = attestedTokens[_attestationID];
-        require(attestedToken.tokenAddress != address(0), "Invalid _attestationID");
+        require(
+            attestedToken.tokenAddress != address(0),
+            "Invalid _attestationID"
+        );
         // 2. mint the correct wrapped NFT
-        ILSP8Bridged(attestedToken.wrappedTokenAddress).mintWithTokenURI(_to, _tokenId, _tokenURI);
+        ILSP8Bridged(attestedToken.wrappedTokenAddress).mintWithTokenURI(
+            _to,
+            _tokenId,
+            _tokenURI
+        );
         // 3. emit event
         emit WrappedNonFungibleTokensReleased(_tokenId, _to, _attestationID);
     }
 
     /** @dev See ILoopso.sol - releaseNonFungibleTokens */
-    function releaseNonFungibleTokens(uint256 _tokenId, address _to, address _token) external {
+    function releaseNonFungibleTokens(
+        uint256 _tokenId,
+        address _to,
+        address _token
+    ) external {
         IERC721(_token).safeTransferFrom(address(this), _to, _tokenId);
     }
 
@@ -188,13 +305,20 @@ contract Loopso is AccessControl, ILoopso, IERC721Receiver {
     /*  =========== CONVENIENCE GETTERS ============  */
     /* ============================================== */
     /** @dev See ILoopso.sol - isTokenSupported */
-    function isTokenSupported(address _tokenAddress, uint256 _tokenChain) external view returns (bool) {
+    function isTokenSupported(
+        address _tokenAddress,
+        uint256 _tokenChain
+    ) external view returns (bool) {
         if (_tokenAddress == address(0)) {
             return false;
         }
-        bytes32 attestationID = keccak256(abi.encodePacked(_tokenAddress, _tokenChain));
+        bytes32 attestationID = keccak256(
+            abi.encodePacked(_tokenAddress, _tokenChain)
+        );
         TokenAttestation memory attestedToken = attestedTokens[attestationID];
-        return _tokenAddress == attestedToken.tokenAddress && _tokenChain == attestedToken.tokenChain;
+        return
+            _tokenAddress == attestedToken.tokenAddress &&
+            _tokenChain == attestedToken.tokenChain;
     }
 
     /** @dev See ILoopso.sol - getSupportedTokensLength */
@@ -203,8 +327,14 @@ contract Loopso is AccessControl, ILoopso, IERC721Receiver {
     }
 
     /** @dev See ILoopso.sol - getAllSupportedTokens */
-    function getAllSupportedTokens() external view returns (TokenAttestation[] memory) {
-        TokenAttestation[] memory attestations = new TokenAttestation[](attestationIds.length);
+    function getAllSupportedTokens()
+        external
+        view
+        returns (TokenAttestation[] memory)
+    {
+        TokenAttestation[] memory attestations = new TokenAttestation[](
+            attestationIds.length
+        );
         for (uint256 i = 0; i < attestationIds.length; i++) {
             attestations[i] = attestedTokens[attestationIds[i]];
         }
@@ -215,7 +345,9 @@ contract Loopso is AccessControl, ILoopso, IERC721Receiver {
         return wrappedTokenToAttestationId[_token] != bytes32(0);
     }
 
-    function wrappedTokenInfo(address _wrappedToken) external view returns (TokenAttestation memory) {
+    function wrappedTokenInfo(
+        address _wrappedToken
+    ) external view returns (TokenAttestation memory) {
         return attestedTokens[wrappedTokenToAttestationId[_wrappedToken]];
     }
 
@@ -223,14 +355,48 @@ contract Loopso is AccessControl, ILoopso, IERC721Receiver {
     /*  =================  ADMIN  ==================  */
     /* ============================================== */
     function setTokenFactory(ITokenFactory _tokenFactory) external onlyAdmin {
-        require(address(_tokenFactory) != address(0), "Can't set LSP Factory to the zero address");
+        require(
+            address(_tokenFactory) != address(0),
+            "Can't set LSP Factory to the zero address"
+        );
         tokenFactory = _tokenFactory;
     }
-    
+
+    function setFungibleFee(uint256 _fee) external onlyAdmin {
+        require(MIN_FEE < _fee && _fee < MAX_FEE, "Trying to set fee out of bounds");
+        FEE_FUNGIBLE = _fee;
+    }
+
+    function setNonFungibleFee(uint256 _fee) external onlyAdmin {
+        require(MIN_FEE < _fee && _fee < MAX_FEE, "Trying to set fee out of bounds");
+        FEE_NON_FUNGIBLE = _fee;
+    }
+
+    function setFeeReceiver(address _feeReceiver) external onlyAdmin {
+        require(_feeReceiver != address(0), "Receiver cant be the zero address");
+        feeReceiver = _feeReceiver;
+    }
+
+    function setDiscountNft(address _discountNft) external onlyAdmin {
+        discountNft = _discountNft;
+    }
+
+    /* ============================================== */
+    /*  ===============  INTERNAL  =================  */
+    /* ============================================== */
+    function calculateFungibleFee(uint256 _amount) internal view returns (uint256) {
+            return (_amount * FEE_FUNGIBLE) / 10000;
+    }
+
     /* ============================================== */
     /*  ============= ERC721 RECEIVER ==============  */
     /* ============================================== */
-    function onERC721Received(address /* operator */, address /* from */, uint256 /* tokenId */, bytes calldata /* data */) external pure returns (bytes4) {
+    function onERC721Received(
+        address /* operator */,
+        address /* from */,
+        uint256 /* tokenId */,
+        bytes calldata /* data */
+    ) external pure returns (bytes4) {
         return IERC721Receiver.onERC721Received.selector;
     }
 }
