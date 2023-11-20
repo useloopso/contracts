@@ -90,10 +90,8 @@ contract Loopso is Constants, AccessControl, ILoopso, IERC721Receiver {
             !isWrappedToken(_token),
             "This is a wrapped token. Call bridgeTokensBack instead."
         );
-
-        bool hasDiscountNft = IERC721(discountNft).balanceOf(msg.sender) > 0;
         
-        uint256 _bridgeFee = hasDiscountNft ? 0 : calculateFungibleFee(_amount);
+        uint256 _bridgeFee = hasDiscountNft() ? 0 : calculateFungibleFee(_amount);
 
         uint256 _amountAfterFee = _amount - _bridgeFee;
 
@@ -107,7 +105,7 @@ contract Loopso is Constants, AccessControl, ILoopso, IERC721Receiver {
             "Transfer failed. Make sure bridge is approved to spend tokens."
         );
 
-        if (!hasDiscountNft) {
+        if (!hasDiscountNft()) {
             success = IERC20(_token).transferFrom(msg.sender, address(this), _bridgeFee);
             require(success, "Fee transfer failed. Make sure the bridge is approved to spend tokens.");
         }
@@ -211,8 +209,7 @@ contract Loopso is Constants, AccessControl, ILoopso, IERC721Receiver {
             "This is a wrapped token. Call bridgeNonFungibleTokensBack instead."
         );
 
-        bool hasDiscountNft = IERC721(discountNft).balanceOf(msg.sender) > 0;
-        if (!hasDiscountNft) {
+        if (!hasDiscountNft()) {
             require(msg.value == FEE_NON_FUNGIBLE, "Pls pay fee ser we poor");
             (bool success, ) = feeReceiver.call{value: FEE_NON_FUNGIBLE}("");
             require(success, "Fee payment failed.");
@@ -385,7 +382,14 @@ contract Loopso is Constants, AccessControl, ILoopso, IERC721Receiver {
     /*  ===============  INTERNAL  =================  */
     /* ============================================== */
     function calculateFungibleFee(uint256 _amount) internal view returns (uint256) {
-            return (_amount * FEE_FUNGIBLE) / 10000;
+        if (FEE_FUNGIBLE == 0) {
+            return 0;
+        }
+        return (_amount * FEE_FUNGIBLE) / 10000;
+    }
+
+    function hasDiscountNft() internal view returns (bool) {
+        return discountNft == address(0) ? false : IERC721(discountNft).balanceOf(msg.sender) > 0;
     }
 
     /* ============================================== */
