@@ -1,0 +1,93 @@
+{
+	"compiler": {
+		"version": "0.8.22+commit.4fc1097e"
+	},
+	"language": "Solidity",
+	"output": {
+		"abi": [
+			{
+				"inputs": [
+					{
+						"internalType": "uint256",
+						"name": "tokenId",
+						"type": "uint256"
+					},
+					{
+						"internalType": "bytes",
+						"name": "data",
+						"type": "bytes"
+					}
+				],
+				"name": "burn",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "to",
+						"type": "address"
+					},
+					{
+						"internalType": "uint256",
+						"name": "tokenId",
+						"type": "uint256"
+					},
+					{
+						"internalType": "string",
+						"name": "_tokenURI",
+						"type": "string"
+					}
+				],
+				"name": "mintWithTokenURI",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			}
+		],
+		"devdoc": {
+			"kind": "dev",
+			"methods": {},
+			"version": 1
+		},
+		"userdoc": {
+			"kind": "user",
+			"methods": {},
+			"version": 1
+		}
+	},
+	"settings": {
+		"compilationTarget": {
+			"src/interfaces/ILSP8Bridged.sol": "ILSP8Bridged"
+		},
+		"evmVersion": "shanghai",
+		"libraries": {},
+		"metadata": {
+			"bytecodeHash": "ipfs"
+		},
+		"optimizer": {
+			"enabled": true,
+			"runs": 200
+		},
+		"remappings": [
+			":@lukso/=lib/lukso-foundry/src/",
+			":@openzeppelin-contracts-upgradeable/=lib/lukso-foundry/lib/openzeppelin-contracts-upgradeable/contracts/",
+			":@openzeppelin/=lib/openzeppelin-contracts/",
+			":ds-test/=lib/forge-std/lib/ds-test/src/",
+			":forge-std/=lib/forge-std/src/"
+		]
+	},
+	"sources": {
+		"src/interfaces/ILSP8Bridged.sol": {
+			"keccak256": "0x1499b01d13552b2a2cdb5a313341e9b7e6b4eb151b2b5b17e24ab0edbf48f6a8",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://5dc72f60c93d28f64a5b8efa3121cd9b8531e06ca886a628eca49d093f25d7ce",
+				"dweb:/ipfs/QmTeBzNQXDosMGpkFcKep9aZUYp3FbTbfFyv8L7jUjrD8k"
+			]
+		}
+	},
+	"version": 1
+}

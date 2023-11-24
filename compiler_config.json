@@ -27,10 +27,7 @@
 		},
 		"remappings": [
 			"ds-test/=lib/forge-std/lib/ds-test/src/",
-			"forge-std/=lib/forge-std/src/",
-			"@lukso/=lib/lukso-foundry/src/",
-			"@openzeppelin-contracts-upgradeable/=lib/lukso-foundry/lib/openzeppelin-contracts-upgradeable/contracts/",
-			"@openzeppelin/=lib/openzeppelin-contracts/"
+			"forge-std/=lib/forge-std/src/"
 		]
 	}
 }
