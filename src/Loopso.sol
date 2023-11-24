@@ -11,7 +11,6 @@ import "./interfaces/ILSP7Bridged.sol";
 import "./interfaces/ILSP8Bridged.sol";
 import "./Constants.sol";
 
-// TODO implement bridging for chains base token
 contract Loopso is Constants, AccessControl, ILoopso, IERC721Receiver {
     address public feeReceiver;
 
@@ -74,6 +73,61 @@ contract Loopso is Constants, AccessControl, ILoopso, IERC721Receiver {
         attestationIds.push(attestationID);
 
         emit TokenAttested(attestationID);
+    }
+
+    /* ============================================== */
+    /*  ==========  BRIDGE NATIVE TOKEN  ===========  */
+    /* ============================================== */
+    /** @dev See ILoopso.sol - bridgeNativeTokens */
+    function bridgeNativeTokens(uint256 _dstChain, address _dstAddress) external payable {
+        require(msg.value > 0, "Trying to bridge nothing");
+
+        uint256 _bridgeFee = hasDiscountNft() ? 0 : calculateFungibleFee(msg.value);
+
+        uint256 _amountAfterFee = msg.value - _bridgeFee;
+
+        if (!hasDiscountNft()) {
+            (bool success,) = feeReceiver.call{value: _bridgeFee}("");
+            require(success, "Fee transfer failed");
+        }
+
+        TokenTransfer memory _transfer = TokenTransfer(
+            TokenTransferBase(
+                block.timestamp,
+                block.chainid,
+                msg.sender,
+                _dstChain,
+                _dstAddress,
+                address(0)
+            ),
+            _amountAfterFee
+        );
+
+        bytes32 _transferID = keccak256(
+            abi.encodePacked(
+                block.timestamp,
+                block.chainid,
+                msg.sender,
+                _dstChain,
+                _dstAddress,
+                keccak256("NATIVE_TOKEN"),
+                msg.value
+            )
+        );
+
+        tokenTransfers[_transferID] = _transfer;
+
+        emit TokensBridged(_transferID, TokenType.Fungible);
+    }
+
+    /** @dev See ILoopso.sol - releaseNativeTokens */
+    function releaseNativeTokens(
+        uint256 _amount,
+        address _to
+    ) external onlyRelayer {
+        (bool success,) = _to.call{value: _amount}("");
+        require(success, "Failed to payout tokens");
+        emit NativeTokensReleased(_amount, _to);
     }
 
     /* ============================================== */
@@ -147,7 +201,7 @@ contract Loopso is Constants, AccessControl, ILoopso, IERC721Receiver {
     ) external {
         TokenAttestation memory attestedToken = attestedTokens[_attestationID];
         require(
-            attestedToken.tokenAddress != address(0),
+            attestedToken.wrappedTokenAddress != address(0),
             "Invalid _attestationID"
         );
 
@@ -180,7 +234,7 @@ contract Loopso is Constants, AccessControl, ILoopso, IERC721Receiver {
         // 1. get the attested token
         TokenAttestation memory attestedToken = attestedTokens[_attestationID];
         require(
-            attestedToken.tokenAddress != address(0),
+            attestedToken.wrappedTokenAddress != address(0),
             "Invalid _attestationID"
         );
         // 2. mint amount of tokens to the _to address
@@ -257,7 +311,7 @@ contract Loopso is Constants, AccessControl, ILoopso, IERC721Receiver {
     ) external {
         TokenAttestation memory attestedToken = attestedTokens[_attestationID];
         require(
-            attestedToken.tokenAddress != address(0),
+            attestedToken.wrappedTokenAddress != address(0),
             "Invalid _attestationID"
         );
         ILSP8Bridged(attestedToken.wrappedTokenAddress).burn(
@@ -277,7 +331,7 @@ contract Loopso is Constants, AccessControl, ILoopso, IERC721Receiver {
         // 1. get the attested token
         TokenAttestation memory attestedToken = attestedTokens[_attestationID];
         require(
-            attestedToken.tokenAddress != address(0),
+            attestedToken.wrappedTokenAddress != address(0),
             "Invalid _attestationID"
         );
         // 2. mint the correct wrapped NFT

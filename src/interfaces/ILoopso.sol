@@ -126,6 +126,12 @@ interface ILoopso {
         bytes32 indexed attestationID
     );
 
+    /** @dev Emitted by releaseNativeTokens. This means bridging back the source chain's native token to the source chain was successful. */
+    event NativeTokensReleased(
+        uint256 indexed amount,
+        address indexed to
+    );
+
     /* ============================================== */
     /*  =============  ADD NEW TOKEN  ==============  */
     /* ============================================== */
@@ -135,6 +141,24 @@ interface ILoopso {
     @param attestation Contains details that are used to identify a token from chain A on chain B.
      */
     function attestToken(TokenAttestation memory attestation) external;
+
+    /* ============================================== */
+    /*  ==========  BRIDGE NATIVE TOKEN  ===========  */
+    /* ============================================== */
+
+    /**
+    @dev Called by users to bridge the source chain's native token (i.e. ETC/MATIC/LYX) to the destination chain.
+    @param _dstChain Chain ID where we are bridging to.
+    @param _dstAddress Address the wrapped tokens will be released to on the destination chain.
+     */
+    function bridgeNativeTokens(uint256 _dstChain, address _dstAddress) external payable;
+
+    /**
+    @dev Called by the relayer after it picks up a TokensBridgedBackEvent
+    @param _amount The amount of tokens to release.
+    @param _to The address to release the tokens to.
+     */
+    function releaseNativeTokens(uint256 _amount, address _to) external;
 
     /* ============================================== */
     /*  ==============  BRIDGE ERC20  ==============  */

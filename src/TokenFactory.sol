@@ -9,7 +9,6 @@ import "./LSP8Bridged.sol";
 
 contract TokenFactory is Ownable, ITokenFactory {
     address public bridge;
-    bytes32 public constant BRIDGE_ROLE = keccak256("BRIDE_ROLE");
     address public masterLSP7;
     address public masterLSP8;
     address[] public lsp7s;
