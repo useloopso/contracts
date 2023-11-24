@@ -98,9 +98,16 @@ interface ILoopso {
         bytes32 indexed attestationID
     );
 
-    /** @dev Emitted by releaseTokens. This means briding back wrapped tokens to the source chain was successful. */
+    /** @dev Emitted by releaseTokens. This means bridging back wrapped tokens to the source chain was successful. */
     event TokensReleased(
         uint256 indexed amount,
+        address indexed to,
+        address indexed token
+    );
+
+    /** @dev Emitted by releaseNonFungibleTokens. This means bridging back wrapped non-fungible tokens to the source chain was successful. */
+    event NonFungibleTokensReleased(
+        uint256 indexed tokenId,
         address indexed to,
         address indexed token
     );
@@ -197,7 +204,13 @@ interface ILoopso {
     @param _dstChain Destination chain ID
     @param _dstAddress Address that will receive the ERC721 on the destination chain     
      */
-    function bridgeNonFungibleTokens(address _token, uint256 _tokenID, string memory tokenURI, uint256 _dstChain, address _dstAddress) external payable;
+    function bridgeNonFungibleTokens(
+        address _token,
+        uint256 _tokenID,
+        string memory tokenURI,
+        uint256 _dstChain,
+        address _dstAddress
+    ) external payable;
 
     /**
     @dev Burns the wrapped ERC721 with token ID on the destination chain, and emits an event that the relayer picks up.
@@ -205,7 +218,11 @@ interface ILoopso {
     @param _to The address that will receive the original ERC721 on the source chain
     @param _attestationID ID of the TokenAttestation struct we use to identify a chain A token on chain B.
      */
-    function bridgeNonFungibleTokensBack(uint256 _tokenId, address _to, bytes32 _attestationID) external;
+    function bridgeNonFungibleTokensBack(
+        uint256 _tokenId,
+        address _to,
+        bytes32 _attestationID
+    ) external;
 
     /**
     @dev Called by the relayer after it picks up a bridge event from the source chain.
@@ -215,7 +232,12 @@ interface ILoopso {
     @param _to The address that will receive the NFT on the destination chain
     @param _attestationID ID of the TokenAttestation struct we use to identify a chain A token on chain B.
      */
-    function releaseWrappedNonFungibleTokens(uint256 _tokenId, string calldata _tokenURI, address _to, bytes32 _attestationID) external;
+    function releaseWrappedNonFungibleTokens(
+        uint256 _tokenId,
+        string calldata _tokenURI,
+        address _to,
+        bytes32 _attestationID
+    ) external;
 
     /**
     @dev Called by the relayer after it picks up a NonFungibleTokensBridgedBack event.
@@ -224,7 +246,11 @@ interface ILoopso {
     @param _to The address that will receive the NFT on the destination chain
     @param _token The address of the NFT on the source chain
      */
-    function releaseNonFungibleTokens(uint256 _tokenId, address _to, address _token) external;    
+    function releaseNonFungibleTokens(
+        uint256 _tokenId,
+        address _to,
+        address _token
+    ) external;
 
     /* ============================================== */
     /*  =========== CONVENIENCE GETTERS ============  */
@@ -234,17 +260,25 @@ interface ILoopso {
     @param _tokenAddress The address of the token.
     @param _tokenChain The chain ID on which the token is deployed.
      */
-    function isTokenSupported(address _tokenAddress, uint256 _tokenChain) external view returns (bool);
+    function isTokenSupported(
+        address _tokenAddress,
+        uint256 _tokenChain
+    ) external view returns (bool);
 
     /** @dev Returns the total number of tokens supported by the bridge. */
     function getSupportedTokensLength() external view returns (uint256);
 
     /** @dev Returns the attestation details for the token if it is a wrapped token, of not it returns an empty TokenAttestation struct. */
-    function wrappedTokenInfo(address _wrappedToken) external returns (TokenAttestation memory);
+    function wrappedTokenInfo(
+        address _wrappedToken
+    ) external returns (TokenAttestation memory);
 
     /** 
     @dev Get all supported tokens.
     @return TokenAttestation[] array
      */
-    function getAllSupportedTokens() external view returns (TokenAttestation[] memory);
+    function getAllSupportedTokens()
+        external
+        view
+        returns (TokenAttestation[] memory);
 }

@@ -297,6 +297,7 @@ contract Loopso is Constants, AccessControl, ILoopso, IERC721Receiver {
         address _token
     ) external {
         IERC721(_token).safeTransferFrom(address(this), _to, _tokenId);
+        emit NonFungibleTokensReleased(_tokenId, _to, _token);
     }
 
     /* ============================================== */
@@ -361,12 +362,12 @@ contract Loopso is Constants, AccessControl, ILoopso, IERC721Receiver {
     }
 
     function setFungibleFee(uint256 _fee) external onlyAdmin {
-        require(MIN_FEE < _fee && _fee < MAX_FEE, "Trying to set fee out of bounds");
+        require(MIN_FEE <= _fee && _fee <= MAX_FEE, "Trying to set fee out of bounds");
         FEE_FUNGIBLE = _fee;
     }
 
     function setNonFungibleFee(uint256 _fee) external onlyAdmin {
-        require(MIN_FEE < _fee && _fee < MAX_FEE, "Trying to set fee out of bounds");
+        require(MIN_FEE <= _fee && _fee <= MAX_FEE, "Trying to set fee out of bounds");
         FEE_NON_FUNGIBLE = _fee;
     }
 
