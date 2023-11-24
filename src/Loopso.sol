@@ -168,6 +168,7 @@ contract Loopso is Constants, AccessControl, ILoopso, IERC721Receiver {
     ) external onlyRelayer {
         bool success = IERC20(_token).transfer(_to, _amount);
         require(success, "Failed to payout tokens");
+        emit TokensReleased(_amount, _to, _token);
     }
 
     /** @dev See ILoopso.sol - releaseWrappedTokens */
