@@ -76,61 +76,6 @@ contract Loopso is Constants, AccessControl, ILoopso, IERC721Receiver {
     }
 
     /* ============================================== */
-    /*  ==========  BRIDGE NATIVE TOKEN  ===========  */
-    /* ============================================== */
-    /** @dev See ILoopso.sol - bridgeNativeTokens */
-    function bridgeNativeTokens(uint256 _dstChain, address _dstAddress) external payable {
-        require(msg.value > 0, "Trying to bridge nothing");
-
-        uint256 _bridgeFee = hasDiscountNft() ? 0 : calculateFungibleFee(msg.value);
-
-        uint256 _amountAfterFee = msg.value - _bridgeFee;
-
-        if (!hasDiscountNft()) {
-            (bool success,) = feeReceiver.call{value: _bridgeFee}("");
-            require(success, "Fee transfer failed");
-        }
-
-        TokenTransfer memory _transfer = TokenTransfer(
-            TokenTransferBase(
-                block.timestamp,
-                block.chainid,
-                msg.sender,
-                _dstChain,
-                _dstAddress,
-                address(0)
-            ),
-            _amountAfterFee
-        );
-
-        bytes32 _transferID = keccak256(
-            abi.encodePacked(
-                block.timestamp,
-                block.chainid,
-                msg.sender,
-                _dstChain,
-                _dstAddress,
-                keccak256("NATIVE_TOKEN"),
-                msg.value
-            )
-        );
-
-        tokenTransfers[_transferID] = _transfer;
-
-        emit TokensBridged(_transferID, TokenType.Fungible);
-    }
-
-    /** @dev See ILoopso.sol - releaseNativeTokens */
-    function releaseNativeTokens(
-        uint256 _amount,
-        address _to
-    ) external onlyRelayer {
-        (bool success,) = _to.call{value: _amount}("");
-        require(success, "Failed to payout tokens");
-        emit NativeTokensReleased(_amount, _to);
-    }
-
-    /* ============================================== */
     /*  ==============  BRIDGE ERC20  ==============  */
     /* ============================================== */
     /** @dev See ILoopso.sol - bridgeTokens */
